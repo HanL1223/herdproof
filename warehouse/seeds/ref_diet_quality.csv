@@ -1,0 +1,9 @@
+zone,quarter,season,dmd_pct,cp_pct
+tropical,1,winter,50,5
+tropical,2,spring,53,7
+tropical,3,summer,62,11
+tropical,4,autumn,57,8
+temperate,1,winter,70,18
+temperate,2,spring,74,20
+temperate,3,summer,60,10
+temperate,4,autumn,63,13

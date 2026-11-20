@@ -1,0 +1,7 @@
+proxy,zone,value,unit,pcaf_option,pcaf_score,description
+assets,all,120,t CO2e per A$m total assets,3b,5,Sector emission factor per unit of assets (beef cattle farming)
+revenue,all,4400,t CO2e per A$m revenue,3a,4,Sector emission factor per unit of revenue (beef cattle farming)
+head,tropical,1.8,t CO2e per head per year,2b,3,Regional production-based factor applied to declared head count
+head,temperate,2.1,t CO2e per head per year,2b,3,Regional production-based factor applied to declared head count
+carcase,tropical,18.5,kg CO2e per kg LW,proxy,,Carcase/regional proxy intensity used by processors
+carcase,temperate,12.8,kg CO2e per kg LW,proxy,,Carcase/regional proxy intensity used by processors

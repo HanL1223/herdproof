@@ -1,0 +1,26 @@
+factor,value,unit,source
+gwp_ch4,28,t CO2e/t CH4,IPCC AR5 GWP100 as used in Australia's NGA/NIR (AIA EAP GWP_FACTORS)
+gwp_n2o,265,t CO2e/t N2O,IPCC AR5 GWP100 as used in Australia's NGA/NIR (AIA EAP GWP_FACTORS)
+ch4_yield_g_per_kg_dmi,20.7,g CH4/kg DMI,Charmley et al. 2016 (AIA EAP beef Scope 1)
+manure_ch4_ef_warm,0.012,kg CH4/kg faecal DM,AIA EAP LIVESTOCK.METHANE_WARM_EF
+manure_ch4_ef_temperate,0.003,kg CH4/kg faecal DM,AIA EAP LIVESTOCK.METHANE_TEMPERATE_EF
+ef_urine_dung_n2o,0.004,kg N2O-N/kg N,AIA EAP BEEF.EF_URINEDUNGDEPOSITED
+frac_gasm,0.2,fraction,IPCC default volatilisation of excreta N (simplified)
+ef_atm_deposition,0.01,kg N2O-N/kg N,IPCC default (simplified)
+frac_leach,0.24,fraction,AIA EAP FRACLEACH (applied only where rainfall > 600 mm)
+ef_leach,0.011,kg N2O-N/kg N,IPCC 2019 default (simplified)
+ef_fert_n_pasture,0.0018,kg N2O-N/kg N,AIA EAP AGRICULTURAL_SOILS.EF_NONIRRIGATEDPASTURE
+frac_gasf,0.11,fraction,IPCC 2019 volatilisation of synthetic N (simplified)
+urea_n_content,0.46,kg N/kg urea,Standard
+urea_co2,0.733,t CO2/t urea,IPCC 0.20 t C/t urea x 44/12
+lime_co2,0.44,t CO2/t lime,IPCC 0.12 t C/t limestone x 44/12
+diesel_kg_per_l,2.71,kg CO2e/L,NGA Factors stationary/transport diesel (approx.)
+petrol_kg_per_l,2.32,kg CO2e/L,NGA Factors gasoline (approx.)
+purchased_cattle_north,12.4,kg CO2e/kg LW,AIA EAP LIVESTOCK_SOURCE_EMISSIONFACTOR (QLD/NT; Wiedemann 2016)
+purchased_cattle_south,11.7,kg CO2e/kg LW,AIA EAP LIVESTOCK_SOURCE_EMISSIONFACTOR (NSW/VIC; Wiedemann 2016)
+plantings_seq_tropical,3.0,t CO2e/ha/yr,Demo simplification (production: FullCAM via AIA vegetation module)
+plantings_seq_temperate,5.0,t CO2e/ha/yr,Demo simplification (production: FullCAM via AIA vegetation module)
+ae_reference_lw,450,kg,Adult equivalent reference liveweight
+ae_daily_intake,8,kg DM/AE/day,Pasture capacity assumption
+pasture_turnover,3.0,x standing DM per year,Demo assumption linking standing DM to annual growth
+pasture_utilisation,0.3,fraction,Safe utilisation of pasture growth

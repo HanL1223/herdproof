@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Landed by herdproof.ingest from consented source connections.
+    tables:
+      - name: hp_farms
+      - name: hp_regions
+      - name: hp_farm_inputs
+      - name: hp_lenders
+      - name: hp_loans
+      - name: hp_processors
+      - name: hp_connections
+      - name: agriwebb_animals
+      - name: agriwebb_records
+      - name: agriwebb_fields
+      - name: nlis_movements
+      - name: satellite_boundary
+      - name: satellite_pasture
+      - name: satellite_woody
+  - name: app
+    description: Live application tables written by the API.
+    tables:
+      - name: consent_ledger

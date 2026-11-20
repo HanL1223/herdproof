@@ -1,0 +1,36 @@
+name: herdproof
+version: "0.1.0"
+config-version: 2
+profile: herdproof
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+target-path: target
+flags:
+  send_anonymous_usage_stats: false  # no telemetry from farm-data builds
+
+clean-targets: ["target", "logs"]
+
+vars:
+  period_start: "2025-07-01"
+  period_end: "2026-06-30"
+  pcaf_reconciled_min_confidence: 75
+  benchmark_min_farms: 5
+  cohort_min_farms: 5
+
+seeds:
+  herdproof:
+    +schema: ref
+
+models:
+  herdproof:
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: table
+    marts:
+      +schema: marts
+      +materialized: table

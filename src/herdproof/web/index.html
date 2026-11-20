@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HerdProof — reconciled, assurance-ready Scope 3 evidence from consented herd and land data</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4efe6; --card: #fffdf9; --line: #e3dbcc; --line-2: #efe9de;
+  --ink: #24231f; --ink-2: #4f4a40; --muted: #6f685b;
+  --brand: #1f4d36; --brand-2: #2f7a4d; --ochre: #b97a1c; --blue: #3a6ea5; --sand: #efe4cf;
+  --ok: #2f6f3e; --warn: #8a5a0e; --fail: #a93226; --ok-bg: #e6f0e6; --warn-bg: #f8eedb; --fail-bg: #f7e3df;
+  --s1: #1f5a3a; --s2: #3f8159; --s3: #79a98a; --s4: #b3cfbb; --s5: #dfe8df;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+h2 { font-size: 26px; } h3 { font-size: 18px; }
+p { margin: 0 0 10px; }
+button { font: inherit; cursor: pointer; }
+a { color: var(--blue); }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 32px; }
+header.top { background: var(--brand); color: #f4efe6; }
+header.top .wrap { display: flex; align-items: center; gap: 28px; height: 68px; }
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 22px; font-weight: 600; }
+.logo small { font-family: var(--sans); font-size: 12px; font-weight: 400; opacity: .8; display: block; letter-spacing: .02em; }
+nav.personas { display: flex; gap: 4px; margin-left: auto; background: rgba(255,255,255,.08); padding: 4px; border-radius: 10px; }
+nav.personas button { background: transparent; color: #e9e3d6; border: 0; padding: 8px 14px; border-radius: 7px; font-size: 14px; }
+nav.personas button[aria-pressed="true"] { background: #f4efe6; color: var(--brand); font-weight: 600; }
+.banner { background: var(--sand); border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-2); }
+.banner .wrap { display: flex; gap: 18px; padding-top: 7px; padding-bottom: 7px; align-items: center; }
+.banner b { color: var(--ink); }
+.banner .spacer { flex: 1; }
+.linkbtn { background: none; border: 0; color: var(--blue); text-decoration: underline; padding: 0; font-size: 13px; }
+main { padding: 28px 0 60px; }
+.lead { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 20px; }
+.lead p { color: var(--ink-2); max-width: 760px; margin: 6px 0 0; }
+.eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+.card + .card { margin-top: 16px; }
+.grid > .card + .card { margin-top: 0; }
+select { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); margin-left: 6px; }
+.card h3 { margin-bottom: 4px; }
+.card .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+.grid { display: grid; gap: 16px; }
+.g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+.g-main { grid-template-columns: 1.55fr 1fr; }
+.stepper { display: flex; gap: 8px; margin-bottom: 18px; }
+.stepper button { flex: 1; text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; color: var(--ink-2); }
+.stepper button b { display: block; color: var(--ink); font-size: 14px; }
+.stepper button span { font-size: 12px; color: var(--muted); }
+.stepper button[aria-current="step"] { border-color: var(--brand-2); box-shadow: inset 0 -3px 0 var(--brand-2); }
+.stepper button .n { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--line-2); font-size: 12px; margin-right: 6px; color: var(--ink); }
+.stepper button.done .n { background: var(--brand-2); color: #fff; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.tile .k { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+.tile .v { font-family: var(--serif); font-size: 30px; line-height: 1.15; margin-top: 4px; }
+.tile .v small { font-family: var(--sans); font-size: 13px; color: var(--muted); font-weight: 400; }
+.tile .d { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+.btn { border: 1px solid var(--brand); background: var(--brand); color: #fff; border-radius: 8px; padding: 9px 16px; font-weight: 600; font-size: 14px; }
+.btn.ghost { background: transparent; color: var(--brand); }
+.btn.small { padding: 5px 10px; font-size: 13px; font-weight: 500; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.src { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-top: 1px solid var(--line-2); }
+.src:first-of-type { border-top: 0; }
+.src .ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; color: #fff; flex: none; font-size: 13px; }
+.src .body { flex: 1; } .src .body b { display: block; } .src .body span { font-size: 13px; color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid transparent; white-space: nowrap; }
+.pill.ok { background: var(--ok-bg); color: var(--ok); } .pill.warn { background: var(--warn-bg); color: var(--warn); }
+.pill.fail { background: var(--fail-bg); color: var(--fail); } .pill.na { background: var(--line-2); color: var(--muted); }
+.pill.info { background: #e3ebf4; color: #2d5784; }
+.toggle { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line-2); align-items: flex-start; }
+.toggle:first-of-type { border-top: 0; }
+.switch { position: relative; width: 44px; height: 24px; flex: none; border-radius: 999px; background: #cfc6b5; border: 0; margin-top: 2px; transition: background .15s; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .15s; }
+.switch[aria-checked="true"] { background: var(--brand-2); } .switch[aria-checked="true"]::after { left: 23px; }
+.switch:disabled { opacity: .45; cursor: not-allowed; }
+.toggle .body b { display: block; } .toggle .body .sees { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+.toggle .body .sees i { color: var(--muted); font-style: normal; }
+.promise { background: #eef3ec; border: 1px solid #cfdfcf; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #24452f; }
+.promise b { color: var(--brand); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+td { padding: 10px; border-bottom: 1px solid var(--line-2); vertical-align: middle; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr.click { cursor: pointer; } tr.click:hover td { background: #f8f3ea; }
+tr.hero td { background: #fbf4e4; }
+.tag { font-size: 11px; background: var(--ochre); color: #fff; border-radius: 4px; padding: 1px 6px; margin-left: 6px; font-weight: 600; vertical-align: 1px; }
+.score { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; font-weight: 700; font-size: 13px; border: 1px solid rgba(0,0,0,.08); }
+.arrow { color: var(--muted); margin: 0 4px; }
+.muted { color: var(--muted); } .small { font-size: 13px; }
+.mono { font-family: var(--mono); font-size: 12.5px; }
+.checks td:first-child { width: 120px; }
+.lever { display: grid; grid-template-columns: 1fr 140px; gap: 6px 18px; padding: 14px 0; border-top: 1px solid var(--line-2); }
+.lever:first-child { border-top: 0; }
+.lever .t { font-weight: 600; } .lever .how { font-size: 13px; color: var(--ink-2); }
+.lever .fx { text-align: right; font-family: var(--serif); font-size: 22px; color: var(--brand); }
+.lever .fx small { display: block; font-family: var(--sans); font-size: 12px; color: var(--muted); }
+.note { font-size: 13px; color: var(--ink-2); background: var(--line-2); border-radius: 8px; padding: 10px 12px; }
+.callout { border-left: 3px solid var(--ochre); padding: 4px 0 4px 14px; color: var(--ink-2); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); margin-top: 8px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; border: 1px solid rgba(0,0,0,.08); }
+svg text { font-family: var(--sans); fill: var(--ink-2); font-size: 12px; }
+svg .ax { stroke: var(--line); } svg .grid { stroke: var(--line-2); }
+.tip { position: fixed; pointer-events: none; background: #24231f; color: #f4efe6; font-size: 12.5px; padding: 6px 9px; border-radius: 6px; z-index: 50; max-width: 280px; opacity: 0; transition: opacity .08s; }
+.overlay { position: fixed; inset: 0; background: rgba(36,35,31,.45); display: none; z-index: 40; overflow-y: auto; padding: 32px 0; }
+.overlay.open { display: block; }
+.modal { background: var(--card); max-width: 980px; margin: 0 auto; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+.modal .mhead { display: flex; align-items: center; gap: 12px; padding: 14px 22px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--card); border-radius: 14px 14px 0 0; }
+.modal .mhead .sp { flex: 1; }
+.modal .mbody { padding: 22px 28px 30px; }
+.pack h2 { font-size: 28px; }
+.pack section { margin-top: 22px; }
+.pack section h4 { font-family: var(--serif); font-size: 17px; margin: 0 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.kv { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.kv div { background: #f8f4ec; border-radius: 8px; padding: 10px 12px; }
+.kv > div > span { display: block; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.kv b { font-family: var(--serif); font-size: 20px; font-weight: 600; }
+.seal { display: flex; gap: 16px; align-items: center; background: #f3efe5; border: 1px dashed #cdbf9f; border-radius: 10px; padding: 12px 14px; }
+.seal .id { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--brand); white-space: nowrap; }
+.verify { font-size: 13px; margin-top: 8px; }
+.oauth { max-width: 460px; margin: 60px auto; background: #fff; border-radius: 14px; padding: 26px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+.oauth .scope { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 12px 0; font-size: 14px; }
+.oauth .scope div { padding: 3px 0; }
+.compare td, .compare th { text-align: center; } .compare td:first-child, .compare th:first-child { text-align: left; }
+.compare td.us { background: #eef3ec; font-weight: 600; } .compare th.us { color: var(--brand); }
+.yes { color: var(--ok); font-weight: 700; } .no { color: var(--muted); } .part { color: var(--warn); }
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.fact { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+.fact b { display: block; font-family: var(--serif); font-size: 22px; color: var(--brand); }
+footer { color: var(--muted); font-size: 12.5px; padding: 20px 0 40px; border-top: 1px solid var(--line); }
+@media print {
+  body { background: #fff; }
+  header.top, .banner, main, footer, .modal .mhead .noprint, .noprint { display: none !important; }
+  .overlay { position: static; display: block !important; background: none; padding: 0; overflow: visible; }
+  .modal { box-shadow: none; max-width: none; }
+  .modal .mhead { position: static; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 2 26 7v8c0 7-5 11-11 13C9 26 4 22 4 15V7z" fill="#f4efe6"/><path d="M9.5 15.5l3.8 3.8 7.4-8" stroke="#1f4d36" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>HerdProof<small>Consented herd &amp; land data → reconciled, assurance-ready Scope 3 evidence</small></div>
+    </div>
+    <nav class="personas" aria-label="Persona">
+      <button data-persona="grazier">Grazier</button>
+      <button data-persona="lender">Ag lender</button>
+      <button data-persona="processor">Processor</button>
+      <button data-persona="how">How it works</button>
+      <button data-persona="why">Why HerdProof</button>
+    </nav>
+  </div>
+</header>
+<div class="banner"><div class="wrap">
+  <span><b>Interactive demo</b> · synthetic data for 56 farms · reporting period <b id="period"></b></span>
+  <span class="spacer"></span>
+  <span>As at <b id="asat"></b></span>
+  <button class="linkbtn" data-action="reset">Reset demo</button>
+</div></div>
+<main><div class="wrap" id="view"></div></main>
+<footer><div class="wrap">HerdProof demo v0.1. Synthetic data generated by a seeded generator, with fixtures shaped like the AgriWebb GraphQL, ISC NLIS and satellite pasture APIs. Footprints use a simplified port of the GAF beef method and are not a certified calculation. Names of farms, lenders and processors are fictional.<br>Emission equations and constants adapted from the AIA Environmental Accounting Platform emissions-calculators (Agricultural Innovation Australia, CC BY 4.0). Unofficial derivative, not validated by AIA.</div></footer>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true"><div id="overlay-body"></div></div>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+const DATA = /*__HERDPROOF_DATA__*/null;
+</script>
+<script>
+"use strict";
+const HERO = DATA.hero, HERO_ID = DATA.meta.hero_farm_id, HERO_LENDER = DATA.meta.hero_lender_id;
+const heroConsents = new Set(HERO.farm.consents.map(c => c.purpose));
+const initialState = () => ({
+  persona: "grazier", step: 1, lenderId: HERO_LENDER, processorId: "P1",
+  connected: { agriwebb: false, nlis: false },
+  consent: { lender: false, benchmark: heroConsents.has("regional_benchmark"), processor: heroConsents.has("processor_cohort") },
+  receipts: HERO.farm.consents.map(c => ({ purpose: c.purpose, at: c.granted_at })),
+  invited: [], heroRevoked: false,
+});
+let state = initialState();
+
+/* ---------- formatting ---------- */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = (n, d = 0) => n == null ? "–" : Number(n).toLocaleString("en-AU", { minimumFractionDigits: d, maximumFractionDigits: d });
+const aud = n => "A$" + (n / 1e6).toFixed(1) + "m";
+const pct = (n, d = 0) => (n > 0 ? "+" : "") + fmt(n, d) + "%";
+const SCORE_COL = { 1: "var(--s1)", 2: "var(--s2)", 3: "var(--s3)", 4: "var(--s4)", 5: "var(--s5)" };
+const SCORE_INK = { 1: "#fff", 2: "#fff", 3: "#14301f", 4: "#14301f", 5: "#14301f" };
+const SCORE_NAME = { 1: "Reconciled multi-source (assurance-ready)", 2: "Farm-reported primary data", 3: "Production proxy (head count)", 4: "Revenue proxy", 5: "Asset proxy" };
+const score = s => s == null ? "–" : `<span class="score" style="background:${SCORE_COL[s]};color:${SCORE_INK[s]}" data-tip="PCAF ${s}: ${SCORE_NAME[s]}">${s}</span>`;
+const STATUS = {
+  pass: ["ok", "✓ Pass"], warn: ["warn", "! Warn"], fail: ["fail", "✕ Fail"], not_assessed: ["na", "– Not assessed"],
+  clear: ["ok", "✓ Deforestation-free"], review: ["warn", "! Clearing detected, review"], insufficient_data: ["na", "? Insufficient data"],
+  reconciled: ["ok", "✓ Reconciled"], revoked: ["fail", "✕ Consent revoked"], farm_reported: ["info", "◐ Farm-reported"], proxy: ["na", "○ Proxy only"],
+};
+const pill = k => { const [c, t] = STATUS[k] || ["na", k]; return `<span class="pill ${c}">${esc(t)}</span>`; };
+const LEVER_SHORT = { weaning: "Weaning +5 pts", mortality: "Halve losses", fuel: "Diesel −15%", plantings: "Shelterbelts 1%", solar: "Solar pumps", nitrogen: "Nitrogen −20%" };
+const sourceName = { agriwebb: "AgriWebb", nlis: "ISC NLIS", satellite: "Satellite pasture" };
+
+/* ---------- charts (hand-rolled SVG) ---------- */
+function hbar(items, { unit = "", width = 600, color = "var(--brand-2)", label = 190, digits = 0 } = {}) {
+  const rowH = 30, h = items.length * rowH + 8, max = Math.max(...items.map(i => Math.abs(i.value)), 1e-9);
+  const plot = width - label - 80;
+  const rows = items.map((it, i) => {
+    const w = Math.max(2, plot * Math.abs(it.value) / max), y = 6 + i * rowH;
+    return `<g data-tip="${esc(it.tip || it.label + ": " + fmt(it.value, digits) + " " + unit)}">
+      <rect x="0" y="${y - 3}" width="${width}" height="${rowH}" fill="transparent"/>
+      <text x="${label - 10}" y="${y + 13}" text-anchor="end">${esc(it.label)}</text>
+      <rect x="${label}" y="${y + 3}" width="${w}" height="14" rx="3" fill="${it.color || color}"/>
+      <text x="${label + w + 6}" y="${y + 14}" style="fill:var(--ink)">${esc(it.text ?? fmt(it.value, digits))}</text></g>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${width} ${h}" width="100%" role="img" aria-label="Bar chart">${rows}<line class="ax" x1="${label}" x2="${label}" y1="2" y2="${h - 2}"/></svg>`;
+}
+
+function rangeChart(b, value, width = 600) {
+  const spread = b.p25_intensity != null;  // P25-P75 is published only from 10 farms
+  const lo = Math.min(spread ? b.p25_intensity : b.median_intensity, value) * 0.9, hi = Math.max(spread ? b.p75_intensity : b.median_intensity, value) * 1.08;
+  const x = v => 30 + (width - 60) * (v - lo) / (hi - lo);
+  const ticks = [];
+  for (let t = Math.ceil(lo); t <= hi; t++) ticks.push(`<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="30" y2="90"/><text x="${x(t)}" y="106" text-anchor="middle">${t}</text>`);
+  return `<svg viewBox="0 0 ${width} 112" width="100%" role="img" aria-label="Intensity versus benchmark">
+    ${ticks.join("")}
+    ${spread ? `<rect x="${x(b.p25_intensity)}" y="40" width="${x(b.p75_intensity) - x(b.p25_intensity)}" height="24" rx="4" fill="var(--s4)"
+      data-tip="Middle half of consenting farms: ${fmt(b.p25_intensity, 1)} to ${fmt(b.p75_intensity, 1)}"/>` : ""}
+    <line x1="${x(b.median_intensity)}" x2="${x(b.median_intensity)}" y1="36" y2="68" stroke="var(--brand)" stroke-width="2.5"
+      data-tip="Benchmark median ${fmt(b.median_intensity, 1)}"/>
+    <text x="${x(b.median_intensity)}" y="84" text-anchor="middle" style="fill:var(--brand);font-weight:600">Median ${fmt(b.median_intensity, 1)}</text>
+    <circle cx="${x(value)}" cy="52" r="8" fill="var(--ochre)" stroke="var(--card)" stroke-width="2" data-tip="Your farm ${fmt(value, 1)}"/>
+    <text x="${x(value)}" y="16" text-anchor="middle" style="fill:var(--ink);font-weight:700">You ${fmt(value, 1)}</text>
+    <line x1="${x(value)}" x2="${x(value)}" y1="20" y2="43" stroke="var(--ochre)" stroke-width="1.5"/>
+  </svg>`;
+}
+
+function woodyChart(defo, width = 600) {
+  const s = defo.series, h = 190, pad = { l: 56, r: 16, t: 18, b: 28 };
+  const vals = s.map(p => p.woody_area_ha), lo = Math.min(...vals) * 0.96, hi = Math.max(...vals) * 1.02;
+  const years = s.map(p => +p.obs_date.slice(0, 4)), y0 = 2018, y1 = 2025;
+  const x = yr => pad.l + (width - pad.l - pad.r) * (yr - y0) / (y1 - y0);
+  const y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - lo) / (hi - lo));
+  const path = s.map((p, i) => `${i ? "L" : "M"}${x(years[i])},${y(p.woody_area_ha)}`).join("");
+  const grid = [0, 0.5, 1].map(f => { const v = lo + (hi - lo) * f; return `<line class="grid" x1="${pad.l}" x2="${width - pad.r}" y1="${y(v)}" y2="${y(v)}"/><text x="${pad.l - 8}" y="${y(v) + 4}" text-anchor="end">${fmt(v)}</text>`; }).join("");
+  const xt = []; for (let yr = y0; yr <= y1; yr++) xt.push(`<text x="${x(yr)}" y="${h - 8}" text-anchor="middle">${yr}</text>`);
+  const cx = x(2020);
+  return `<svg viewBox="0 0 ${width} ${h}" width="100%" role="img" aria-label="Woody vegetation cover over time">
+    <rect x="${cx}" y="${pad.t}" width="${width - pad.r - cx}" height="${h - pad.t - pad.b}" fill="#f6efe0"/>
+    ${grid}${xt.join("")}
+    <line x1="${cx}" x2="${cx}" y1="${pad.t - 6}" y2="${h - pad.b}" stroke="var(--ochre)" stroke-dasharray="4 3" stroke-width="1.5"/>
+    <text x="${cx + 6}" y="${pad.t + 8}" style="fill:var(--warn);font-weight:600">EUDR cut-off 31 Dec 2020</text>
+    <path d="${path}" fill="none" stroke="var(--brand-2)" stroke-width="2"/>
+    ${s.map((p, i) => `<circle cx="${x(years[i])}" cy="${y(p.woody_area_ha)}" r="4.5" fill="var(--brand-2)" stroke="var(--card)" stroke-width="2" data-tip="${years[i]}: ${fmt(p.woody_area_ha)} ha woody cover"/>`).join("")}
+    <text x="12" y="${pad.t + 4}" transform="rotate(-90 12 ${pad.t + 4})" text-anchor="end">ha</text>
+  </svg>`;
+}
+
+function pcafMix(borrowers, width = 600) {
+  const total = borrowers.reduce((a, b) => a + b.outstanding_aud, 0);
+  const bar = (key, y, title) => {
+    let x = 110; const plot = width - 120;
+    const segs = [1, 2, 3, 4, 5].map(s => {
+      const amt = borrowers.filter(b => b[key] === s).reduce((a, b) => a + b.outstanding_aud, 0);
+      if (!amt) return "";
+      const w = plot * amt / total, sx = x; x += w;
+      const share = 100 * amt / total;
+      return `<g data-tip="${esc(title)} · PCAF ${s} (${SCORE_NAME[s]}): ${fmt(share)}% of outstanding">
+        <rect x="${sx + 1}" y="${y}" width="${Math.max(1, w - 2)}" height="26" rx="3" fill="${SCORE_COL[s]}"/>
+        ${w > 46 ? `<text x="${sx + w / 2}" y="${y + 17}" text-anchor="middle" style="fill:${SCORE_INK[s]};font-weight:600">${s} · ${fmt(share)}%</text>` : ""}</g>`;
+    }).join("");
+    return `<text x="100" y="${y + 17}" text-anchor="end" style="fill:var(--ink);font-weight:600">${title}</text>${segs}`;
+  };
+  return `<svg viewBox="0 0 ${width} 84" width="100%" role="img" aria-label="PCAF score mix by outstanding">
+    ${bar("baseline_score", 6, "Before")}${bar("current_score", 46, "With HerdProof")}</svg>
+    <div class="legend">${[1, 2, 3, 4, 5].map(s => `<span><i style="background:${SCORE_COL[s]}"></i>${s} ${SCORE_NAME[s]}</span>`).join("")}</div>`;
+}
+
+function cohortChart(segments, width = 600) {
+  const rows = segments.filter(s => s.is_published);
+  const vals = rows.flatMap(r => [r.p25_intensity, r.p75_intensity, r.proxy_intensity, r.primary_intensity]).filter(v => v != null);
+  const lo = Math.floor(Math.min(...vals) - 0.5), hi = Math.ceil(Math.max(...vals) + 0.5), label = 120, rowH = 40;
+  const x = v => label + (width - label - 20) * (v - lo) / (hi - lo), h = rows.length * rowH + 30;
+  const ticks = []; for (let t = lo; t <= hi; t++) ticks.push(`<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="4" y2="${h - 24}"/><text x="${x(t)}" y="${h - 8}" text-anchor="middle">${t}</text>`);
+  const body = rows.map((r, i) => {
+    const y = 20 + i * rowH;
+    return `<text x="${label - 12}" y="${y + 4}" text-anchor="end" style="fill:var(--ink)">${esc(r.segment)}</text>
+      ${r.p25_intensity == null ? "" : `<line x1="${x(r.p25_intensity)}" x2="${x(r.p75_intensity)}" y1="${y}" y2="${y}" stroke="var(--s3)" stroke-width="6" stroke-linecap="round"
+        data-tip="${esc(r.segment)}: middle half of suppliers ${fmt(r.p25_intensity, 1)} to ${fmt(r.p75_intensity, 1)}"/>`}
+      <path d="M${x(r.proxy_intensity)},${y - 7} l7,7 l-7,7 l-7,-7z" fill="var(--card)" stroke="var(--ochre)" stroke-width="2.5"
+        data-tip="${esc(r.segment)}: carcase / regional proxy (illustrative) ${fmt(r.proxy_intensity, 1)}"/>
+      <circle cx="${x(r.primary_intensity)}" cy="${y}" r="7" fill="var(--brand-2)" stroke="var(--card)" stroke-width="2"
+        data-tip="${esc(r.segment)}: reconciled primary ${fmt(r.primary_intensity, 1)} (LW-weighted)"/>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${width} ${h}" width="100%" role="img" aria-label="Supplier intensity, primary versus proxy">${ticks.join("")}${body}</svg>
+    <div class="legend"><span><i style="background:var(--brand-2);border-radius:50%"></i>Reconciled primary data (LW-weighted)</span>
+    <span><i style="background:var(--card);border:2px solid var(--ochre);transform:rotate(45deg) scale(.8)"></i>Carcase / regional proxy (illustrative)</span>
+    <span><i style="background:var(--s3)"></i>Middle half of suppliers (P25–P75, shown from 10 farms)</span><span class="muted">kg CO2e / kg liveweight</span></div>`;
+}
+
+/* ---------- integrity: same canonical JSON + SHA-256 as the backend ---------- */
+function canon(v) {
+  if (v === null || typeof v !== "object") return JSON.stringify(v);
+  if (Array.isArray(v)) return "[" + v.map(canon).join(",") + "]";
+  return "{" + Object.keys(v).sort().map(k => JSON.stringify(k) + ":" + canon(v[k])).join(",") + "}";
+}
+async function verifyPack(pack) {
+  const { integrity, ...body } = pack;
+  if (!(window.crypto && crypto.subtle)) return { ok: null, msg: "Browser hashing needs a secure context; use `uv run herdproof verify`." };
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canon(body)));
+  const hex = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+  return { ok: hex === integrity.content_hash, hex };
+}
+
+/* ---------- derived state ---------- */
+const heroShared = () => state.consent.lender && state.connected.agriwebb && state.connected.nlis;
+function portfolio(lenderId) {
+  const p = DATA.lenders.find(l => l.lender_id === lenderId);
+  if (lenderId === HERO_LENDER && state.heroRevoked && !heroShared())
+    return { ...p, borrowers: p.borrowers.map(b => b.farm_id === HERO_ID ? { ...b, status: "revoked" } : b) };
+  if (lenderId !== HERO_LENDER || !heroShared()) return p;
+  const s = HERO.on_share;
+  return { ...p, summary: s.summary, borrowers: p.borrowers.map(b => b.farm_id === HERO_ID ? s.borrower : b), packs: { ...p.packs, [HERO_ID]: s.pack } };
+}
+
+/* ---------- views ---------- */
+const VIEWS = { grazier: grazierView, lender: lenderView, processor: processorView, how: howView, why: whyView };
+function render() {
+  document.querySelectorAll("[data-persona]").forEach(b => b.setAttribute("aria-pressed", b.dataset.persona === state.persona));
+  document.getElementById("view").innerHTML = VIEWS[state.persona]();
+}
+
+function grazierView() {
+  const f = HERO.farm, steps = [["Connect & consent", "Your data, your rules"], ["Footprint", "Intensity vs your region"], ["Levers", "What moves the number"], ["Lender-ready report", "Share once, reuse"]];
+  const done = [state.connected.agriwebb && state.connected.nlis, state.step > 2, state.step > 3, heroShared()];
+  return `<div class="lead"><div><div class="eyebrow">Grazier · ${esc(f.farm_name)} · ${esc(f.region_name)}, ${esc(f.state)} · PIC ${esc(f.pic)}</div>
+      <h2>Free footprint, benchmark and a lender-ready report</h2>
+      <p>${esc(f.breed)} breeding herd. Connect AgriWebb and NLIS once. You decide, purpose by purpose, who sees what.</p></div></div>
+    <div class="stepper">${steps.map((s, i) => `<button data-step="${i + 1}" ${state.step === i + 1 ? 'aria-current="step"' : ""} class="${done[i] ? "done" : ""}">
+      <b><span class="n">${done[i] ? "✓" : i + 1}</span>${s[0]}</b><span>${s[1]}</span></button>`).join("")}</div>
+    ${[stepConnect, stepFootprint, stepLevers, stepReport][state.step - 1]()}`;
+}
+
+function stepConnect() {
+  const c = state.connected, both = c.agriwebb && c.nlis;
+  const src = (key, ico, color, title, desc, action) => `<div class="src"><div class="ico" style="background:${color}">${ico}</div>
+    <div class="body"><b>${title}</b><span>${desc}</span></div>
+    ${c[key] ? '<span class="pill ok">✓ Connected</span>' : action}</div>`;
+  const recs = Object.fromEntries(HERO.report.sources.map(s => [s.source, s.rows]));
+  const toggle = (key, title, sees, never, disabled) => `<div class="toggle">
+    <button class="switch" role="switch" aria-checked="${state.consent[key]}" data-consent="${key}" ${disabled ? "disabled" : ""} aria-label="${esc(title)}"></button>
+    <div class="body"><b>${title}</b><div class="sees">Sees: ${sees}<br><i>Never sees: ${never}</i></div></div></div>`;
+  return `<div class="grid g2">
+    <div class="card"><h3>1. Connect your data</h3><div class="sub">Read-only. Disconnect any time.</div>
+      ${src("agriwebb", "AW", "#3d6b8c", "AgriWebb", c.agriwebb ? `${fmt(recs.agriwebb)} animals, records and paddocks read via GraphQL (OAuth2)` : "Animals, weigh, birth, sale and death records, paddocks", `<button class="btn small" data-action="oauth">Connect</button>`)}
+      ${src("nlis", "NL", "#8a5a0e", "ISC NLIS movements", c.nlis ? `${fmt(recs.nlis)} movements on/off PIC ${esc(HERO.farm.pic)}` : `Livestock movements for PIC ${esc(HERO.farm.pic)}`, `<button class="btn small" data-action="nlis" ${c.agriwebb ? "" : "disabled"}>Link PIC</button>`)}
+      <div class="src"><div class="ico" style="background:#4f6b3a">SAT</div><div class="body"><b>Satellite pasture &amp; woody cover</b>
+        <span>Licensed imagery, clipped to your property boundary only. ${fmt(recs.satellite)} observations.</span></div><span class="pill ${c.agriwebb ? "ok" : "na"}">${c.agriwebb ? "✓ Applied" : "After AgriWebb"}</span></div>
+      <div class="promise" style="margin-top:12px"><b>Our promise.</b> Your data is never sold, never shared raw, and never used to train models. Lenders and buyers see derived evidence only, and only for the purposes you switch on. Aligned with the Australian Farm Data Code.</div>
+    </div>
+    <div class="card"><h3>2. Choose who sees what</h3><div class="sub">Each purpose is a separate consent you can revoke.</div>
+      ${toggle("lender", "Share my evidence pack with Ironbark Rural Bank", "footprint, intensity, reconciliation result, deforestation status, PCAF score", "animal-level records, herd class and flow detail, paddock maps, other lenders' data", !both)}
+      ${toggle("benchmark", "Include my farm in de-identified regional benchmarks", "your intensity enters a pooled median (published only with 5 or more farms)", "your name, PIC or any farm-level figure", !c.agriwebb)}
+      ${toggle("processor", "Include me in Great Dividing Meat Co.'s supplier cohort", "aggregated cohort figures (5 or more farms)", "anything that identifies your farm", !c.agriwebb)}
+      ${!both ? '<p class="note" style="margin-top:8px">Connect AgriWebb and link your PIC to unlock reconciled sharing.</p>' : ""}
+      <h3 style="margin-top:14px;font-size:15px">Consent receipts</h3>
+      <table class="small"><tbody>${state.receipts.map(r => `<tr><td class="mono">${esc(r.purpose)}</td><td class="muted">${esc(r.at.slice(0, 10))}</td><td class="num"><span class="pill ok">Active</span></td></tr>`).join("") || '<tr><td class="muted">No active consents</td></tr>'}</tbody></table>
+    </div></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" data-step="2" ${c.agriwebb ? "" : "disabled"}>See my footprint →</button></div>`;
+}
+
+const needsConnect = () => `<div class="card"><h3>Connect AgriWebb first</h3><p class="muted">Your footprint is calculated from your own herd records.</p><button class="btn" data-step="1">Go to step 1</button></div>`;
+
+function stepFootprint() {
+  if (!state.connected.agriwebb) return needsConnect();
+  const fp = HERO.footprint, b = fp.benchmark, rec = HERO.reconciliation, d = HERO.deforestation;
+  const parts = [["Enteric methane", fp.enteric_t], ["Manure methane", fp.manure_ch4_co2e_t], ["Dung & urine N2O", fp.excreta_n2o_t],
+    ["Fuel", fp.fuel_t], ["Electricity (Scope 2)", fp.scope2_t], ["Fertiliser, lime & urea", fp.fertiliser_n2o_t + fp.urea_lime_co2_t],
+    ["Purchased cattle (Scope 3)", fp.scope3_purchased_t]].filter(p => p[1] > 0.05).sort((a, b) => b[1] - a[1]);
+  const cov = DATA.benchmark_coverage.find(x => x.level === "region" && x.benchmark_key === HERO.farm.region_code);
+  const benchCard = state.consent.benchmark && b ? `<div class="card"><h3>Intensity vs ${esc(b.benchmark_name)} benchmark</h3>
+      <div class="sub">kg CO2e per kg liveweight · ${b.n_farms} consenting farms · ${esc(b.level)} level · you are in the <b>${esc(b.quartile)}</b></div>
+      ${rangeChart(b, fp.intensity_kg_per_kg_lw)}
+      <p class="small muted" style="margin-top:8px">${cov && !cov.is_published ? `${esc(cov.benchmark_name)} has ${cov.n_farms} consenting farms; regional benchmarks publish only when every region has 5 or more, so you are compared with ${esc(b.benchmark_name)} for now.` : ""} Only ${b.p25_intensity == null ? "the median is" : "the median and middle half are"} shown. No other farm is identifiable.</p></div>`
+    : `<div class="card"><h3>Regional benchmark</h3><p class="callout">Benchmarks are <b>give-to-get</b>. Switch on "Include my farm in regional benchmarks" in step 1 to compare yourself with consenting farms in your region.</p><button class="btn ghost small" data-step="1">Change consent</button></div>`;
+  return `<div class="grid g4">
+      <div class="tile"><div class="k">Emissions intensity</div><div class="v">${fmt(fp.intensity_kg_per_kg_lw, 1)} <small>kg CO2e/kg LW</small></div><div class="d">${b && state.consent.benchmark ? `${pct(b.pct_vs_median, 1)} vs median` : "Gross, before sequestration"}</div></div>
+      <div class="tile"><div class="k">Gross emissions</div><div class="v">${fmt(fp.gross_t)} <small>t CO2e</small></div><div class="d">Scope 1: ${fmt(fp.scope1_t)} · Scope 2: ${fmt(fp.scope2_t)} · Scope 3 (purchased cattle): ${fmt(fp.scope3_purchased_t)}</div></div>
+      <div class="tile"><div class="k">Liveweight produced</div><div class="v">${fmt(fp.lw_produced_kg / 1000, 1)} <small>t</small></div><div class="d">Sold ${fmt(fp.sold_lw_kg / 1000, 1)} t, adjusted for herd change</div></div>
+      <div class="tile"><div class="k">Average herd</div><div class="v">${fmt(fp.avg_head)} <small>head</small></div><div class="d">${fmt(fp.herd_flows.births)} births · ${fmt(fp.herd_flows.sales)} sales · ${fmt(fp.herd_flows.deaths)} deaths</div></div>
+    </div>
+    <div class="grid g-main" style="margin-top:16px"><div>
+      <div class="card"><h3>Where your emissions come from</h3><div class="sub">t CO2e, ${esc(DATA.meta.period.label)} · GAF beef method (simplified) · AR5 GWP100</div>
+        ${hbar(parts.map(([l, v]) => ({ label: l, value: v, tip: `${l}: ${fmt(v)} t CO2e (${fmt(100 * v / fp.gross_t)}%)` })), { unit: "t CO2e" })}</div>
+      ${benchCard}</div>
+      <div><div class="card"><h3>Cross-checked, not just calculated</h3><div class="sub">Your herd book against independent sources</div>
+        <div class="row" style="margin-bottom:10px"><span style="font-family:var(--serif);font-size:34px">${fmt(rec.confidence)}</span><span class="muted">/100 confidence</span></div>
+        <table class="checks small"><tbody>${rec.checks.map(c => `<tr><td>${pill(c.status)}</td><td>${esc(c.label)}<div class="muted">${esc(c.detail)}</div></td></tr>`).join("")}</tbody></table></div>
+      <div class="card"><h3>Deforestation check</h3><div class="sub">${pill(d.status)} Woody cover since ${esc(d.series[0].obs_date.slice(0, 4))}</div>${woodyChart(d, 520)}</div></div></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" data-step="3">What can I change? →</button></div>`;
+}
+
+function stepLevers() {
+  if (!state.connected.agriwebb) return needsConnect();
+  const L = HERO.levers;
+  return `<div class="grid g-main"><div class="card"><h3>Your biggest levers</h3><div class="sub">First-order estimates on your own numbers. Most also lift kilograms sold.</div>
+      ${L.map(l => `<div class="lever"><div><div class="t">${esc(l.title)} <span class="pill ${l.effort === "low" ? "ok" : l.effort === "medium" ? "warn" : "na"}">${esc(l.effort)} effort</span></div>
+        <div class="how">${esc(l.how)}</div><div class="small muted">${l.liveweight_change_kg ? `+${fmt(l.liveweight_change_kg)} kg liveweight · ` : ""}${fmt(l.emissions_change_t, 1)} t CO2e${l.metric === "net" ? " (net, reported separately)" : ""}</div></div>
+        <div class="fx">${pct(l.intensity_change_pct, 1)}<small>${l.metric} intensity → ${fmt(l.new_intensity, 1)}</small></div></div>`).join("")}</div>
+    <div class="card"><h3>Intensity reduction by lever</h3><div class="sub">% change in kg CO2e per kg liveweight</div>
+      ${hbar(L.map(l => ({ label: LEVER_SHORT[l.id] || l.id, value: -l.intensity_change_pct, text: pct(l.intensity_change_pct, 1), color: l.metric === "net" ? "var(--s3)" : "var(--brand-2)" })), { width: 460, label: 170 })}
+      <p class="small muted" style="margin-top:10px">Lighter bar: sequestration, reported as net intensity and never netted into gross Scope 1. The beef herd-management ACCU method closed to new projects on 30 Sep 2025 (existing projects keep crediting), so for most graziers these levers are about productivity and lender pricing.</p></div></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" data-step="4">Make it lender-ready →</button></div>`;
+}
+
+function stepReport() {
+  if (!state.connected.agriwebb) return needsConnect();
+  const r = HERO.report, shared = heroShared();
+  return `<div class="grid g2"><div class="card"><h3>Your report is sealed and verifiable</h3><div class="sub">Plain-English summary with a tamper-evident ID</div>
+      <p>${esc(r.narrative.text)}</p>
+      <div class="seal"><div><div class="eyebrow">Pack ID</div><div class="id">${esc(r.integrity.pack_id)}</div></div><div class="mono muted" style="word-break:break-all">sha256 ${esc(r.integrity.content_hash)}</div></div>
+      <div class="row" style="margin-top:14px"><button class="btn" data-pack="grazier">Open printable report</button></div></div>
+    <div class="card"><h3>Share with your lender</h3><div class="sub">Ironbark Rural Bank · facility ${esc(HERO.on_share.borrower.facility_id)}</div>
+      ${shared ? `<p><span class="pill ok">✓ Shared</span> Ironbark now sees a reconciled, assurance-ready evidence pack instead of a sector proxy. PCAF score: ${score(HERO.on_share.borrower.baseline_score)}<span class="arrow">→</span>${score(HERO.on_share.borrower.current_score)}</p>
+          <p class="small muted">This uplift is what makes you eligible for sustainability-linked pricing, such as the ag emissions-reduction loan discounts some banks now offer.</p>
+          <div class="row"><button class="btn ghost" data-goto="lender">See the lender's view →</button><button class="btn ghost small" data-consent="lender">Revoke</button></div>`
+        : `<p>Today your bank estimates your emissions from a sector average (PCAF ${HERO.on_share.borrower.baseline_score}). Sharing your reconciled pack gives them PCAF ${HERO.on_share.borrower.current_score} evidence with no extra paperwork.</p>
+          <button class="btn" data-consent="lender" ${state.connected.agriwebb && state.connected.nlis ? "" : "disabled"}>Share with Ironbark Rural Bank</button>
+          ${state.connected.nlis ? "" : '<p class="small muted" style="margin-top:8px">Link your PIC in step 1 first: reconciliation needs NLIS.</p>'}`}
+    </div></div>`;
+}
+
+function lenderView() {
+  const p = portfolio(state.lenderId), s = p.summary;
+  const rows = [...p.borrowers].sort((a, b) => (b.farm_id === HERO_ID) - (a.farm_id === HERO_ID) || a.farm_name.localeCompare(b.farm_name));
+  return `<div class="lead"><div><div class="eyebrow">Ag lender · sustainability &amp; credit analytics</div>
+      <h2>${esc(p.lender_name)}: financed emissions you can defend</h2>
+      <p>Borrower-level evidence replaces sector proxies as borrowers connect. Farm figures appear only where the borrower has consented to share with you.</p></div>
+      <label class="small">Lender <select data-select="lender">${DATA.lenders.map(l => `<option value="${l.lender_id}" ${l.lender_id === state.lenderId ? "selected" : ""}>${esc(l.lender_name)} (${esc(l.segment)})</option>`).join("")}</select></label></div>
+    <div class="grid g4">
+      <div class="tile"><div class="k">Portfolio PCAF score</div><div class="v">${fmt(s.baseline_pcaf_score, 1)} <span class="arrow">→</span> ${fmt(s.current_pcaf_score, 1)}</div><div class="d">Outstanding-weighted; lower is better</div></div>
+      <div class="tile"><div class="k">Financed emissions</div><div class="v">${fmt(s.current_financed_t)} <small>t CO2e</small></div><div class="d">Proxy-only estimate was ${fmt(s.baseline_financed_t)} t</div></div>
+      <div class="tile"><div class="k">Evidence coverage</div><div class="v">${s.reconciled + s.farm_reported}<small> / ${s.borrowers} borrowers</small></div><div class="d">${s.reconciled} reconciled · ${s.farm_reported} farm-reported · ${s.proxy} proxy</div></div>
+      <div class="tile"><div class="k">Needs attention</div><div class="v">${s.flags + s.deforestation_review}</div><div class="d">${s.flags} reconciliation fails · ${s.deforestation_review} clearing reviews</div></div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>Data quality mix</h3><div class="sub">Share of ${aud(s.outstanding_aud)} outstanding by PCAF score</div>${pcafMix(p.borrowers)}
+        <p class="small" style="margin-top:12px">${movesNote(p.borrowers, s)}</p></div>
+      <div class="card"><h3>Why the score moves</h3><div class="sub">PCAF Standard, business loans</div>
+        <table class="small"><tbody>
+        <tr><td>${score(5)} ${score(4)}</td><td>Sector factor per A$ of assets or revenue (illustrative factors in this demo). Cannot tell one borrower from another.</td></tr>
+        <tr><td>${score(3)}</td><td>Declared head count × regional factor (illustrative).</td></tr>
+        <tr><td>${score(2)}</td><td>Borrower's own herd records, GAF method (single source).</td></tr>
+        <tr><td>${score(1)}</td><td>Herd records reconciled with NLIS and satellite, confidence ≥ 75, and a clear land-use check (clearing under review or missing imagery caps the score at 2). Assurance-ready, not assured: an independent assurer must sign before it is reported as verified.</td></tr>
+        </tbody></table></div></div>
+    <div class="card" style="margin-top:16px"><h3>Borrowers</h3><div class="sub">Click a shared borrower to open its evidence pack.</div>
+      <table><thead><tr><th>Borrower</th><th class="num">Outstanding</th><th>PCAF</th><th class="num">Financed t CO2e</th><th class="num">Confidence</th><th>Reconciliation</th><th>Deforestation</th><th>Evidence</th></tr></thead>
+      <tbody>${rows.map(b => `<tr class="${b.shared || b.status === "revoked" ? "click" : ""} ${b.farm_id === HERO_ID ? "hero" : ""}" ${b.shared ? `data-open="${b.farm_id}"` : b.status === "revoked" ? 'data-revoked="1"' : ""}>
+        <td><b>${esc(b.farm_name)}</b>${b.farm_id === HERO_ID ? '<span class="tag">Demo farm</span>' : ""}<div class="small muted">${esc(b.region_name)}, ${esc(b.state)}</div></td>
+        <td class="num">${aud(b.outstanding_aud)}</td>
+        <td>${score(b.baseline_score)}${b.shared ? `<span class="arrow">→</span>${score(b.current_score)}` : ""}</td>
+        <td class="num">${fmt(b.current_financed_t)}${b.shared ? `<div class="small muted">was ${fmt(b.baseline_financed_t)}</div>` : ""}</td>
+        <td class="num">${b.shared ? fmt(b.confidence) : "–"}</td>
+        <td>${b.shared ? (b.n_fail ? `<span class="pill fail">✕ ${b.n_fail} failed</span>` : b.n_warn ? `<span class="pill warn">! ${b.n_warn} warning</span>` : '<span class="pill ok">✓ Clean</span>') : '<span class="muted small">Not shared</span>'}</td>
+        <td>${b.shared ? pill(b.deforestation_status) : '<span class="muted small">–</span>'}</td>
+        <td>${b.shared || b.status === "revoked" ? pill(b.status) : state.invited.includes(b.farm_id) ? '<span class="pill info">Invite sent</span>'
+          : `<button class="btn ghost small" data-invite="${b.farm_id}">Invite to connect</button>`}</td></tr>`).join("")}</tbody></table>
+      <p class="small muted" style="margin-top:10px">"Not shared" covers borrowers who have not connected and borrowers who connected but have not consented to share with you. HerdProof does not reveal which.</p></div>`;
+}
+
+function processorView() {
+  const p = DATA.processors.find(x => x.processor_id === state.processorId), all = p.segments.find(s => s.segment === "All suppliers");
+  return `<div class="lead"><div><div class="eyebrow">Processor · Scope 3 &amp; deforestation due diligence</div>
+      <h2>${esc(p.processor_name)}: supplier cohort evidence</h2>
+      <p>Aggregated, de-identified figures from suppliers who opted in to this processor's cohort. Groups smaller than ${p.k_min} farms are suppressed. No farm-level data leaves HerdProof.</p></div>
+      <label class="small">Processor <select data-select="processor">${DATA.processors.map(x => `<option value="${x.processor_id}" ${x.processor_id === state.processorId ? "selected" : ""}>${esc(x.processor_name)}</option>`).join("")}</select></label></div>
+    ${all && all.is_published ? `<div class="grid g4">
+      <div class="tile"><div class="k">Consenting suppliers</div><div class="v">${all.n_farms}</div><div class="d">${fmt(all.head_supplied)} head · ${fmt(all.lw_supplied_t)} t LW supplied</div></div>
+      <div class="tile"><div class="k">Primary intensity</div><div class="v">${fmt(all.primary_intensity, 1)} <small>kg CO2e/kg LW</small></div><div class="d">Proxy says ${fmt(all.proxy_intensity, 1)} (${pct(100 * (all.primary_intensity / all.proxy_intensity - 1), 1)})</div></div>
+      <div class="tile"><div class="k">Supplier spread</div><div class="v">${all.p25_intensity == null ? "–" : `${fmt(all.p25_intensity, 1)}–${fmt(all.p75_intensity, 1)}`}</div><div class="d">${all.p25_intensity == null ? "P25–P75 published from 10 farms" : "P25–P75: what a single proxy cannot show"}</div></div>
+      <div class="tile"><div class="k">Deforestation-free LW</div><div class="v">${fmt(100 * all.clear_share)}<small>%</small></div><div class="d">${all.n_review} supplier(s) flagged for clearing review</div></div>
+    </div>` : `<div class="card"><p>Cohort suppressed: fewer than ${p.k_min} consenting suppliers.</p></div>`}
+    <div class="grid g-main" style="margin-top:16px">
+      <div class="card"><h3>Primary vs proxy, by segment</h3><div class="sub">The proxy is often close on average and misses the spread. Outlier suppliers are where abatement and land-clearing risk sit.</div>${cohortChart(p.segments)}</div>
+      <div class="card"><h3>Segments</h3><div class="sub">k-anonymity: published only with ${p.k_min} or more farms</div>
+        <table class="small"><thead><tr><th>Segment</th><th class="num">Farms</th><th class="num">Primary</th><th class="num">Proxy</th><th class="num">Clear LW</th></tr></thead><tbody>
+        ${p.segments.map(s => s.is_published ? `<tr><td>${esc(s.segment)}</td><td class="num">${s.n_farms}</td><td class="num">${fmt(s.primary_intensity, 1)}</td><td class="num">${fmt(s.proxy_intensity, 1)}</td><td class="num">${fmt(100 * s.clear_share)}%</td></tr>`
+          : `<tr><td>${esc(s.segment)}</td><td class="num">${s.n_farms}</td><td colspan="3" class="muted">${s.n_farms < p.k_min ? `Suppressed (fewer than ${p.k_min})` : "Suppressed so a smaller segment cannot be derived"}</td></tr>`).join("")}</tbody></table>
+        <p class="small muted" style="margin-top:10px">Supply is matched from consenting suppliers' sale records to this processor's PIC. State segments publish only if every state has 5 or more farms; totals appear only at the all-supplier level; P25–P75 needs 10 or more farms. EUDR applies from 30 Dec 2026; Australia is rated low risk, so EU importers run simplified due diligence (geolocation still required). Property-level evidence supports that due diligence.</p></div></div>
+    <div class="card" style="margin-top:16px"><h3>What the processor licenses</h3><p class="small">Cohort-level primary data for its Scope 3 baseline (around 98.5% of boxed-beef emissions sit in processors' Scope 3), deforestation due-diligence evidence for EU-bound supply, and a supplier engagement channel. Graziers opt in per processor. Their own report stays free.</p></div>`;
+}
+
+function howView() {
+  const box = (x, y, w, h, title, sub, fill = "#fffdf9", stroke = "var(--line)") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${fill}" stroke="${stroke}"/>
+    <text x="${x + 12}" y="${y + 22}" style="fill:var(--ink);font-weight:700;font-size:13px">${title}</text>${sub.map((s, i) => `<text x="${x + 12}" y="${y + 40 + i * 15}" style="font-size:11.5px">${s}</text>`).join("")}`;
+  const arrow = (x1, y1, x2, y2) => `<path d="M${x1},${y1} C${(x1 + x2) / 2},${y1} ${(x1 + x2) / 2},${y2} ${x2},${y2}" fill="none" stroke="#9c927f" stroke-width="1.6" marker-end="url(#ah)"/>`;
+  const srcs = [["AgriWebb API", ["GraphQL · OAuth2 (Marketplace)", "animals, records, paddocks"]], ["ISC NLIS", ["Licensed API · PIC authorisation", "movements on/off the PIC"]],
+    ["Satellite pasture", ["Licensed (e.g. Cibo Labs)", "biomass, ground and woody cover"]], ["Grazier inputs", ["2-minute form", "fuel, power, fertiliser"]]];
+  const buyers = [["Grazier · free", ["Footprint, benchmark, levers", "lender-ready report"]], ["Ag lender · A$50–150/farm/yr", ["Evidence packs, PCAF uplift", "portfolio view"]],
+    ["Processor · cohort licence", ["De-identified supplier cohorts", "Deforestation due-diligence evidence"]], ["Auditor / assurer", ["Verifies pack hashes", "and source snapshots"]]];
+  const flyNodes = [["Graziers connect", "free footprint & report"], ["Benchmarks unlock", "k ≥ 5 per region"], ["Lenders get evidence", "PCAF uplift per borrower"], ["Lenders reward it", "pricing, covenants"]];
+  const node = i => { const a = -Math.PI / 2 + i * Math.PI / 2; return [260 + 175 * Math.cos(a), 165 + 120 * Math.sin(a)]; };
+  const fly = flyNodes.map((n, i) => { const [cx, cy] = node(i);
+    return `<rect x="${cx - 80}" y="${cy - 26}" width="160" height="52" rx="26" fill="${i % 2 ? "#eef3ec" : "#f8eedb"}" stroke="var(--line)"/>
+      <text x="${cx}" y="${cy - 3}" text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:13px">${n[0]}</text><text x="${cx}" y="${cy + 14}" text-anchor="middle" style="font-size:11.5px">${n[1]}</text>`; }).join("");
+  const heads = [45, 135, 225, 315].map(d => { // clockwise arrowheads on the ellipse
+    const a = (d - 90) * Math.PI / 180, x = 260 + 175 * Math.cos(a), y = 165 + 120 * Math.sin(a);
+    const t = Math.atan2(120 * Math.cos(a), -175 * Math.sin(a)), p = (r, o) => `${x + r * Math.cos(t + o)},${y + r * Math.sin(t + o)}`;
+    return `<polygon points="${p(9, 0)} ${p(8, 2.4)} ${p(8, -2.4)}" fill="var(--brand-2)"/>`; }).join("");
+  return `<div class="lead"><div><div class="eyebrow">How it works</div><h2>Three sources, one consent gate, evidence anyone can verify</h2>
+    <p>Adapters land only consented data. dbt models turn it into footprint, reconciliation, PCAF and deforestation marts. Evidence packs are sealed with a SHA-256 content hash.</p></div></div>
+    <div class="card"><svg viewBox="0 0 1240 430" width="100%" role="img" aria-label="Architecture">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#9c927f"/></marker></defs>
+      ${srcs.map((s, i) => box(10, 20 + i * 100, 230, 78, s[0], s[1])).join("")}
+      <rect x="282" y="20" width="96" height="378" rx="10" fill="#f8eedb" stroke="#e2cfa6"/>
+      <text x="330" y="190" text-anchor="middle" style="fill:var(--warn);font-weight:700;font-size:13px">Consent</text><text x="330" y="207" text-anchor="middle" style="fill:var(--warn);font-weight:700;font-size:13px">gate</text>
+      <text x="330" y="228" text-anchor="middle" style="font-size:11px">purpose-bound</text><text x="330" y="243" text-anchor="middle" style="font-size:11px">ledger</text>
+      ${srcs.map((_, i) => arrow(240, 59 + i * 100, 282, 59 + i * 100)).join("")}
+      <rect x="420" y="20" width="440" height="378" rx="12" fill="#eef3ec" stroke="#cfdfcf"/>
+      <text x="436" y="44" style="fill:var(--brand);font-weight:700;font-size:15px;font-family:var(--serif)">HerdProof</text>
+      ${box(436, 58, 408, 62, "Source adapters → raw (landing NDJSON)", ["Common interface; typed raw tables; per-farm snapshot hashes"])}
+      ${box(436, 132, 408, 62, "dbt: staging → intermediate → marts", ["DuckDB locally; Snowflake in production (same SQL, cross-db macros)"])}
+      ${box(436, 206, 196, 78, "GAF footprint", ["Enteric, manure, N2O, energy", "intensity per kg LW"])}
+      ${box(648, 206, 196, 78, "Reconciliation", ["Herd book vs NLIS vs pasture", "confidence 0–100"])}
+      ${box(436, 296, 196, 88, "PCAF & deforestation", ["Score 5 → 1 per borrower", "woody loss after 31 Dec 2020"])}
+      ${box(648, 296, 196, 88, "Evidence packs", ["SHA-256 sealed, verifiable", "AI narrative (Claude or template)"])}
+      ${arrow(378, 209, 420, 209)}
+      ${buyers.map((s, i) => box(1000, 20 + i * 100, 230, 78, s[0], s[1])).join("")}
+      ${buyers.map((_, i) => arrow(860, 209, 1000, 59 + i * 100)).join("")}
+    </svg></div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>The data flywheel</h3><div class="sub">The moat is the consented connection graph and its reconciliation history, not the calculator.</div>
+        <svg viewBox="0 0 520 330" width="100%" role="img" aria-label="Data flywheel">
+          <ellipse cx="260" cy="165" rx="175" ry="120" fill="none" stroke="var(--s4)" stroke-width="8"/>
+          ${heads}${fly}
+          <text x="260" y="161" text-anchor="middle" style="fill:var(--brand);font-weight:700;font-size:15px;font-family:var(--serif)">More farms,</text>
+          <text x="260" y="180" text-anchor="middle" style="fill:var(--brand);font-weight:700;font-size:15px;font-family:var(--serif)">better evidence</text>
+        </svg>
+        <p class="small muted">Side loop: processor cohorts grow with coverage, and buyer demand gives graziers a second reason to connect. Channel: ag accountants and advisers can offer the connection as part of year-end work.</p></div>
+      <div class="card"><h3>Consent and data rights</h3>
+        <table class="small"><tbody>
+          <tr><td><b>Append-only</b></td><td>Grants and revocations are stored as events, so the full history is kept.</td></tr>
+          <tr><td><b>Purpose-bound</b></td><td>Separate consents for each lender, for benchmarks and for processor cohorts. Connecting a source is not consent to share.</td></tr>
+          <tr><td><b>When it is checked</b></td><td>Lender portfolio, borrower detail and pack issue or retrieval check the live ledger, so revoking stops lender access at once. Benchmarks and cohorts apply consent at each rebuild.</td></tr>
+          <tr><td><b>Derived only</b></td><td>Lenders get figures, flags and hashes, never animal-level records. Raw data is never sold.</td></tr>
+          <tr><td><b>k-anonymity</b></td><td>Benchmarks and cohorts are published only with 5 or more consenting farms.</td></tr>
+          <tr><td><b>Verifiable</b></td><td>Packs carry a content hash plus a snapshot hash per source, so an assurer can re-check them.</td></tr>
+          <tr><td><b>Frameworks</b></td><td>Australian Farm Data Code, Privacy Act APPs, AgriWebb Marketplace terms, ISC NLIS licence.</td></tr>
+        </tbody></table></div></div>`;
+}
+
+function whyView() {
+  const Y = '<span class="yes">✓</span>', N = '<span class="no">–</span>', P = t => `<span class="part">${t}</span>`;
+  const rows = [
+    ["Farm footprint (GAF method)", Y, Y, Y, P("estimated"), Y],
+    ["Independent cross-check (NLIS, satellite)", N, P("partial"), N, N, Y + " reconciled + confidence"],
+    ["PCAF score and uplift per borrower", N, P("pilots"), N, N, Y],
+    ["Lender portfolio view across farm software", N, P("pilots"), N, N, Y],
+    ["Deforestation evidence (31 Dec 2020 cut-off)", N, P("limited"), N, N, Y],
+    ["Hash-verifiable evidence for assurance", N, N, N, N, Y],
+    ["Purpose-bound consent and k-anonymous pooling", P("in-app"), P("partial"), N, "n/a", Y],
+  ];
+  return `<div class="lead"><div><div class="eyebrow">Why HerdProof</div><h2>The footprint is a commodity. Evidence a lender can rely on is not.</h2>
+    <p>Free calculators already exist. HerdProof is the evidence layer that lenders and buyers need: multi-source reconciliation, hash-verifiable packs, PCAF uplift, a portfolio view and deforestation evidence.</p></div></div>
+    <div class="card"><table class="compare"><thead><tr><th></th><th>AgriWebb GAF report</th><th>Ruminati</th><th>CSIRO FarmPrint</th><th>Carcase-data proxy</th><th class="us">HerdProof</th></tr></thead>
+      <tbody>${rows.map(r => `<tr><td>${r[0]}</td>${r.slice(1, 5).map(c => `<td>${c}</td>`).join("")}<td class="us">${r[5]}</td></tr>`).join("")}</tbody></table>
+      <p class="small muted" style="margin-top:10px">Assessment from public information as of Nov 2026 (sources below): AgriWebb has a built-in GAF report; Ruminati integrates with AgriWebb and has run pilots with CBA and Rabobank; CSIRO FarmPrint launched in Feb 2026; AMPC found carcase proxies close to verified footprints on average (11.7 vs 11.4).</p></div>
+    <h3 style="margin:24px 0 10px">Why now</h3>
+    <div class="facts">
+      <div class="fact"><b>1 Jul 2026</b>ASRS Group 2 reporting starts; Scope 3 is required from each entity's second reporting year. Modified liability for Scope 3 statements covers financial years starting 1 Jan 2025 to 31 Dec 2027.</div>
+      <div class="fact"><b>2% → 26%</b>Westpac: agriculture is 2% of committed exposures but 26% of financed emissions, about 80% of it from livestock.</div>
+      <div class="fact"><b>&gt;A$140B</b>of lender credit to agriculture (Sep 2025). Banks supply about 93% of rural finance.</div>
+      <div class="fact"><b>1.15%</b>NAB rate discount on agribusiness finance that cuts emissions (CEFC-backed, Jan 2025). Pricing like this needs borrower-level evidence.</div>
+      <div class="fact"><b>30 Dec 2026</b>EUDR applies (cut-off 31 Dec 2020). Australia is rated low risk, so importers run simplified due diligence; geolocation evidence is still required.</div>
+      <div class="fact"><b>53,964</b>cattle businesses and 30.4M head (Jun 2024). AgriWebb managed more than 15% of the national herd (2022).</div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>Selling points by buyer</h3><table class="small"><tbody>
+        <tr><td><b>Lender</b></td><td>PCAF uplift and assurance-ready (not assured) evidence per borrower, independent of farm platform. Supports sustainability-linked pricing.</td></tr>
+        <tr><td><b>Processor</b></td><td>Supplier-specific primary data and deforestation due-diligence evidence. Shows the spread around the average and the outlier suppliers that proxies miss.</td></tr>
+        <tr><td><b>Grazier</b></td><td>Free. Connect once, share with whoever you choose, unlock loan discounts.</td></tr></tbody></table></div>
+      <div class="card"><h3>What must be true</h3><table class="small"><tbody>
+        <tr><td>1</td><td>AgriWebb Marketplace approval, with rights to share derived results with grazier-nominated lenders. Benchmarks need their own right.</td></tr>
+        <tr><td>2</td><td>An ISC NLIS API licence (a 7-step process), scoped to consenting PICs.</td></tr>
+        <tr><td>3</td><td>A lender LOI: one regional or mid-tier lender pays A$75 or more per farm per year for evidence and PCAF uplift.</td></tr>
+        <tr><td>4</td><td>Assurance providers accept multi-source reconciliation as evidence for limited assurance.</td></tr>
+        <tr><td>5</td><td>Carcase proxies are not accepted as score-2 evidence, which would close the gap.</td></tr></tbody></table></div></div>
+    <div class="card" style="margin-top:16px"><h3>Sources</h3><p class="small">${SOURCES.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join(" · ")}</p></div>`;
+}
+const SOURCES = [
+  ["Westpac 2% / 26% / ~80% livestock", "https://bankingday.com/westpac-takes-on-herd"],
+  ["ABA: ag credit >A$140B, banks 93%", "https://www.ausbanking.org.au/wp-content/uploads/2025/11/254512-Agri-report_WEB.pdf"],
+  ["NAB 1.15% emissions-reduction discount", "https://www.nab.com.au/news/business-banking/nab-cefc-discount"],
+  ["AMPC: 98.5% in Scope 3; 11.7 vs 11.4", "https://ampc.com.au/media/o3zmlbzz/ampc-showcase-3-things-about-scope-3-publish.pdf"],
+  ["MLA beef fast facts 2025", "https://www.mla.com.au/globalassets/mla-corporate/prices--markets/documents/trends--analysis/fast-facts--maps/mla_beef-fast-facts-2025_301025.pdf"],
+  ["AgriWebb >15% of herd (2022)", "https://techcrunch.com/2022/10/10/agriwebbs-software-seeks-to-boost-yields-lower-environmental-impacts-for-farmers-and-ranchers/"],
+  ["CBA × Ruminati", "https://commbank.com.au/articles/newsroom/2024/02/cba-emissions-calculator-ruminati.html"],
+  ["Rabobank emissions basics", "https://www.rabobank.com.au/media-releases/2024/cultivating-clarity-understanding-emissions-basics-increasingly-important-for-Australias-farm-sector"],
+  ["CN30 target dropped", "https://www.beefcentral.com/news/aus-red-meat-sector-drops-carbon-neutral-2030-target/"],
+  ["CER beef herd management method", "https://cer.gov.au/schemes/australian-carbon-credit-unit-scheme/accu-scheme-methods/beef-cattle-herd-management-method"],
+  ["ASRS modified liability (BDO)", "https://www.bdo.com.au/en-au/insights/esg-sustainability/asic-provides-guidance-on-the-modified-liability-settings-for-mandatory-sustainability-reporting"],
+  ["EUDR application 30 Dec 2026", "https://www.addleshawgoddard.com/en/insights/insights-briefings/2026/retail-consumer/eu-deforestation-regulation-final-countdown-to-application-30-december-2026/"],
+  ["EC rates Australia low risk", "https://www.beefcentral.com/news/european-commission-declares-australia-low-risk-for-deforestation/"],
+  ["ASIC: reporting groups and start dates", "https://www.asic.gov.au/about-asic/news-centre/find-a-media-release/2024-releases/24-205mr-asic-urges-businesses-to-prepare-for-mandatory-climate-reporting/"],
+  ["AgriWebb GAF calculator", "https://help.agriwebb.com/en/articles/11846390-greenhouse-accounting-framework"],
+  ["CSIRO FarmPrint (Feb 2026)", "https://www.csiro.au/en/news/All/News/2026/February/CSIRO-unveils-new-tool-to-help-farmers-measure-environmental-footprint"],
+  ["AIA emissions-calculators", "https://github.com/aginnovationaustralia/emissions-calculators"],
+];
+
+/* ---------- evidence pack modal ---------- */
+function packHtml(pack) {
+  const fp = pack.footprint, lender = pack.pack_type === "lender_borrower", rec = pack.reconciliation, d = pack.deforestation;
+  return `<article class="pack"><div class="eyebrow">${lender ? `Borrower evidence pack · ${esc(pack.audience.lender_name)} · facility ${esc(pack.audience.facility_id)}` : "Grazier report"} · ${esc(pack.reporting_period.label)}</div>
+    <h2>${esc(pack.farm.farm_name)}</h2><p class="muted">${esc(pack.farm.region_name)}, ${esc(pack.farm.state)} · PIC ${esc(pack.farm.pic)} · issued ${esc(pack.issued_at)}</p>
+    <div class="seal"><div><div class="eyebrow">Pack ID</div><div class="id">${esc(pack.integrity.pack_id)}</div></div>
+      <div style="flex:1"><div class="mono muted" style="word-break:break-all">sha256 ${esc(pack.integrity.content_hash)}</div><div class="verify" id="verify-out">Not yet verified in this browser.</div></div>
+      <div class="noprint row"><button class="btn small" data-action="verify">Verify</button><button class="btn ghost small" data-action="tamper" data-tip="Changes one number and re-verifies">Tamper test</button></div></div>
+    <section><h4>Summary</h4><p>${esc(pack.narrative.text)}</p><p class="small muted">Narrative: ${esc(pack.narrative.generator)}. Figures come from the structured sections below.</p></section>
+    <section><h4>Footprint</h4><div class="kv">
+      <div><span>Intensity</span><b>${fmt(fp.intensity_kg_per_kg_lw, 1)}</b> kg CO2e/kg LW</div><div><span>Gross</span><b>${fmt(fp.gross_t)}</b> t CO2e</div>
+      <div><span>Scope 1 / 2 / 3</span><b>${fmt(fp.scope1_t)} / ${fmt(fp.scope2_t)} / ${fmt(fp.scope3_purchased_t)}</b></div><div><span>Liveweight produced</span><b>${fmt(fp.lw_produced_kg / 1000, 1)}</b> t</div></div>
+      ${pack.benchmark ? `<p class="small" style="margin-top:8px">Benchmark (${esc(pack.benchmark.benchmark_name)}, ${esc(pack.benchmark.level)}, n=${pack.benchmark.n_farms}): median ${fmt(pack.benchmark.median_intensity, 1)}, ${esc(pack.benchmark.quartile)}.</p>` : ""}</section>
+    ${lender ? `<section><h4>PCAF data quality and financed emissions</h4><div class="kv">
+      <div><span>Score before</span><b>${score(pack.pcaf.before)}</b> option ${esc(pack.pcaf.before_option)}</div><div><span>Score now</span><b>${score(pack.pcaf.after)}</b> option ${esc(pack.pcaf.after_option)}</div>
+      <div><span>Attribution factor</span><b>${fmt(pack.pcaf.attribution_factor, 3)}</b></div><div><span>Financed (Scope 1+2)</span><b>${fmt(pack.pcaf.financed_t)}</b> t CO2e (was ${fmt(pack.pcaf.before_financed_t)})</div></div></section>` : ""}
+    <section><h4>Reconciliation · confidence ${fmt(rec.confidence)}/100</h4>${rec.checks ? `<table class="checks small"><tbody>${rec.checks.map(c => `<tr><td>${pill(c.status)}</td><td>${esc(c.label)}</td><td class="muted">${esc(c.detail)}</td><td class="num muted">weight ${c.weight}</td></tr>`).join("")}</tbody></table>`
+      : `<p class="small">${rec.n_fail} failed, ${rec.n_warn} warning checks; coverage ${fmt(100 * rec.coverage)}% of check weight.</p>`}</section>
+    <section><h4>Deforestation check (cut-off 31 Dec 2020)</h4><p>${pill(d.status)} ${d.post_cutoff_loss_ha ? `${fmt(d.post_cutoff_loss_ha)} ha woody loss since cut-off.` : ""}</p>${d.series ? woodyChart(d, 900) : ""}</section>
+    ${(pack.transition_levers || pack.levers) ? `<section><h4>${lender ? "Transition levers (borrower)" : "Improvement levers"}</h4><table class="small"><tbody>${(pack.transition_levers || pack.levers).map(l => `<tr><td>${esc(l.title)}</td><td class="num">${pct(l.intensity_change_pct, 1)} ${esc(l.metric)}</td><td class="muted">${esc(l.how)}</td></tr>`).join("")}</tbody></table></section>` : ""}
+    <section><h4>Sources and snapshots</h4><table class="small"><thead><tr><th>Source</th><th>Access</th><th class="num">Rows</th><th>Snapshot SHA-256</th></tr></thead><tbody>
+      ${pack.sources.map(s => `<tr><td>${esc(sourceName[s.source] || s.source)}</td><td class="muted">${esc(s.auth)}</td><td class="num">${fmt(s.rows)}</td><td class="mono" style="word-break:break-all">${esc(s.snapshot_sha256)}</td></tr>`).join("")}</tbody></table>
+      ${pack.consent ? `<p class="small muted" style="margin-top:8px">Shared under consent <span class="mono">${esc(pack.consent.consent_id)}</span> (${esc(pack.consent.purpose)}, scopes: ${esc(pack.consent.scopes.join(", "))}), ${esc(pack.consent.basis)}.</p>` : ""}</section>
+    <section><h4>Methodology and limitations</h4><p class="small">${esc(pack.methodology.engine)}. ${esc(pack.methodology.gwp)}. Enteric: ${esc(pack.methodology.enteric)}. Intensity: ${esc(pack.methodology.intensity)}.${lender ? " PCAF: " + esc(pack.methodology.pcaf) + "." : ""}</p>
+      ${lender ? `<p class="small">${esc(pack.methodology.financed_emissions)}.</p>` : ""}
+      <p class="small muted">Limitations: ${esc(pack.methodology.limitations.join("; "))}.</p><p class="small muted">${esc(pack.methodology.attribution)}</p></section></article>`;
+}
+
+function movesNote(borrowers, s) {
+  const moves = borrowers.filter(b => b.shared).map(b => 100 * (b.current_financed_t / b.baseline_financed_t - 1)).sort((x, y) => x - y);
+  const total = 100 * (s.current_financed_t / s.baseline_financed_t - 1);
+  if (!moves.length) return "No borrowers share evidence yet.";
+  const med = [...moves].map(Math.abs).sort((x, y) => x - y)[Math.floor(moves.length / 2)];
+  return `Data quality improves while the portfolio total stays similar (${pct(total, 1)}). Individual shared borrowers move between ${pct(moves[0])} and ${pct(moves[moves.length - 1])} (median ±${fmt(med)}%), because sector proxies are roughly right on average and wrong per farm. Proxy factors here are illustrative. Financed figures are attributed Scope 1+2; purchased-cattle Scope 3 is reported in each pack but not attributed.`;
+}
+
+function showRevoked() {
+  const id = HERO.on_share.pack.integrity;
+  document.getElementById("overlay-body").innerHTML = `<div class="modal"><div class="mhead"><b>Evidence pack</b><span class="sp"></span><button class="btn small" data-action="close">Close</button></div>
+    <div class="mbody"><p><span class="pill fail">✕ Consent revoked</span></p><h2 style="margin:8px 0">${esc(HERO.farm.farm_name)}: content withheld</h2>
+    <p>The borrower revoked <span class="mono">lender_share:${esc(HERO_LENDER)}</span>. HerdProof now returns only this stub for pack <span class="mono">${esc(id.pack_id)}</span>. Previously issued copies stay hash-verifiable; verification also reports that consent is no longer active.</p>
+    <p class="mono muted" style="word-break:break-all">sha256 ${esc(id.content_hash)}</p></div></div>`;
+  document.getElementById("overlay").classList.add("open");
+}
+
+let openPack = null;
+function showPack(pack) {
+  openPack = pack;
+  document.getElementById("overlay-body").innerHTML = `<div class="modal"><div class="mhead"><b>Evidence pack</b><span class="sp"></span>
+    <button class="btn ghost small noprint" data-action="download">Download JSON</button><button class="btn ghost small noprint" data-action="print">Print</button>
+    <button class="btn small noprint" data-action="close">Close</button></div><div class="small muted noprint" id="pack-note" style="padding:0 22px"></div><div class="mbody">${packHtml(pack)}</div></div>`;
+  document.getElementById("overlay").classList.add("open");
+}
+function showOAuth() {
+  document.getElementById("overlay-body").innerHTML = `<div class="oauth"><div class="eyebrow">Simulated AgriWebb authorisation (demo)</div>
+    <h3 style="margin:6px 0 4px">HerdProof wants read access</h3><p class="small muted">OAuth2 authorization-code flow via the AgriWebb Marketplace. Account: ${esc(HERO.farm.farm_name)}</p>
+    <div class="scope"><div>✓ Animals and identities (EID, NLIS tag)</div><div>✓ Records: weigh, birth, purchase, sale, death</div><div>✓ Fields (paddocks) and areas</div><div class="muted">✕ No write access · ✕ No financial data</div></div>
+    <p class="small">Used only to calculate your footprint. Sharing with anyone else needs a separate consent.</p>
+    <div class="row" style="justify-content:flex-end"><button class="btn ghost" data-action="close">Cancel</button><button class="btn" data-action="allow">Allow read access</button></div></div>`;
+  document.getElementById("overlay").classList.add("open");
+}
+// Sandboxed viewers (e.g. embedded previews) silently block print and downloads, so say so.
+const framed = (() => { try { return window.self !== window.top; } catch { return true; } })();
+function guarded(fn) {
+  let failed = framed;
+  try { fn(); } catch { failed = true; }
+  if (failed) document.getElementById("pack-note").textContent = "If nothing happened, open the HTML file locally to print or download.";
+}
+const closeOverlay = () => { document.getElementById("overlay").classList.remove("open"); openPack = null; };
+
+function setConsent(key, on) {
+  state.consent[key] = on;
+  const purpose = { lender: "lender_share:" + HERO_LENDER, benchmark: "regional_benchmark", processor: "processor_cohort" }[key];
+  state.receipts = state.receipts.filter(r => r.purpose !== purpose);
+  if (on) state.receipts.push({ purpose, at: DATA.meta.as_at });
+  if (key === "lender") state.heroRevoked = !on && state.connected.nlis;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", async e => {
+  const t = e.target.closest("button, tr[data-open], tr[data-revoked]");
+  if (!t) { if (e.target.id === "overlay") closeOverlay(); return; }
+  const d = t.dataset;
+  if (d.persona) { state.persona = d.persona; render(); window.scrollTo(0, 0); }
+  else if (d.goto) { state.persona = d.goto; render(); window.scrollTo(0, 0); }
+  else if (d.step) { state.step = +d.step; render(); }
+  else if (d.consent) { setConsent(d.consent, !state.consent[d.consent]); render(); }
+  else if (d.open) { showPack(portfolio(state.lenderId).packs[d.open]); }
+  else if (d.pack === "grazier") { showPack(HERO.report); }
+  else if (d.invite) { state.invited.push(d.invite); render(); }
+  else if (d.revoked) showRevoked();
+  else if (d.action === "oauth") showOAuth();
+  else if (d.action === "allow") { state.connected.agriwebb = true; closeOverlay(); render(); }
+  else if (d.action === "nlis") { state.connected.nlis = true; render(); }
+  else if (d.action === "close") closeOverlay();
+  else if (d.action === "print") guarded(() => window.print());
+  else if (d.action === "reset") { state = initialState(); closeOverlay(); render(); }
+  else if (d.action === "download") guarded(() => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(openPack, null, 2)], { type: "application/json" }));
+    a.download = openPack.integrity.pack_id + ".json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 0);
+  });
+  else if (d.action === "verify" || d.action === "tamper") {
+    const out = document.getElementById("verify-out");
+    let pack = openPack;
+    if (d.action === "tamper") { pack = structuredClone(openPack); pack.footprint.gross_t = Math.round(pack.footprint.gross_t * 0.9); }
+    const r = await verifyPack(pack);
+    out.innerHTML = r.ok === null ? esc(r.msg) : r.ok
+      ? `<span class="pill ok">✓ Intact</span> Recomputed hash matches. The content is exactly as issued.`
+      : `<span class="pill fail">✕ Tampered</span> Gross emissions edited to ${fmt(pack.footprint.gross_t)} t, so the hash no longer matches: <span class="mono">${r.hex.slice(0, 16)}…</span>`;
+  }
+});
+document.addEventListener("change", e => {
+  const s = e.target.dataset.select;
+  if (s === "lender") state.lenderId = e.target.value;
+  if (s === "processor") state.processorId = e.target.value;
+  render();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeOverlay(); });
+const tip = document.getElementById("tip");
+document.addEventListener("mousemove", e => {
+  const el = e.target.closest && e.target.closest("[data-tip]");
+  if (!el) { tip.style.opacity = 0; return; }
+  tip.textContent = el.dataset.tip; tip.style.opacity = 1;
+  tip.style.left = Math.min(e.clientX + 14, innerWidth - 300) + "px"; tip.style.top = (e.clientY + 16) + "px";
+});
+
+document.getElementById("period").textContent = `${DATA.meta.period.label} (${DATA.meta.period.start} to ${DATA.meta.period.end})`;
+document.getElementById("asat").textContent = new Date(DATA.meta.as_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+render();
+</script>
+</body>
+</html>

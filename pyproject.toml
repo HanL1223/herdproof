@@ -1,0 +1,40 @@
+[project]
+name = "herdproof"
+version = "0.1.0"
+description = "Consented herd and land data turned into reconciled, assurance-ready Scope 3 evidence (demo)."
+authors = [{ name = "Han Li" }]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "dbt-core>=1.10,<2",
+    "dbt-duckdb>=1.9",
+    "duckdb>=1.2",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+]
+
+[project.urls]
+Homepage = "https://github.com/HanL1223/herdproof"
+Repository = "https://github.com/HanL1223/herdproof"
+
+[project.optional-dependencies]
+ai = ["anthropic>=0.40"]
+
+[project.scripts]
+herdproof = "herdproof.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/herdproof"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]  # formatter owns wrapping; long string literals are allowed

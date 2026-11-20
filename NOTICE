@@ -1,0 +1,32 @@
+HerdProof (demo) - third-party attribution
+==========================================
+
+Emissions equations and constants
+---------------------------------
+Parts of warehouse/models/marts/fct_farm_footprint.sql and warehouse/seeds/ref_emission_factors.csv /
+ref_electricity_factors.csv are adapted from:
+
+  AIA Environmental Accounting Platform - emissions-calculators v3.0.2
+  Agricultural Innovation Australia (AIA)
+  https://github.com/aginnovationaustralia/emissions-calculators
+  https://www.npmjs.com/package/@aginnovationaustralia/emissions-calculators
+  Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+  https://creativecommons.org/licenses/by/4.0/
+
+The adapted portions of those files are made available under CC BY 4.0, as the source requires.
+The rest of HerdProof is covered by LICENSE.
+
+This is an UNOFFICIAL derivative. It has not been reviewed or validated by AIA and does not
+represent AIA's calculator or the Greenhouse Accounting Framework (GAF) tools.
+
+Changes made
+------------
+- Ported a subset of the beef Scope 1 logic (dry-matter intake, enteric methane at 20.7 g CH4/kg DMI,
+  manure methane, faecal and urinary nitrogen) from JavaScript to SQL.
+- Milk-intake terms set to zero; calves under 200 days excluded and replaced by a cow lactation uplift
+  (1 + 0.25 x nursing fraction); standard reference weight fixed at 550 / 700 kg.
+- Seasons mapped to financial-year quarters instead of calendar seasons.
+- Indirect N2O uses IPCC default volatilisation and leaching fractions, simplified from AIA's handling.
+- Constants copied: GWP (CH4 28, N2O 265), manure CH4 emission factors, urine/dung N2O EF, non-irrigated
+  pasture fertiliser EF, leaching fraction, state electricity Scope 2 factors, purchased-cattle factors.
+- Not ported: savannah burning, vegetation (FullCAM) sequestration, feed purchases, dairy/sheep modules.

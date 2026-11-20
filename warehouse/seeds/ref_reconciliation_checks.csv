@@ -1,0 +1,8 @@
+check_id,label,weight,requires
+nlis_sales,AgriWebb sales vs NLIS off-movements,30,nlis
+nlis_purchases,AgriWebb purchases vs NLIS on-movements,15,nlis
+herd_balance,Herd book balance (open + in - out = close),15,agriwebb
+stocking_vs_pasture,Stocking rate vs satellite pasture capacity,15,satellite
+land_area,Mapped paddocks vs satellite property boundary,10,satellite
+mortality,Mortality rate plausibility,5,agriwebb
+weight_coverage,Liveweight evidence coverage,10,agriwebb
