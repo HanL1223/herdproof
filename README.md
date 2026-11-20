@@ -427,6 +427,8 @@ Copyright (c) 2026 Han Li. Proprietary: you may view the code and run the demo t
 
 Parts of the footprint model and emission-factor seeds are adapted from the **AIA Environmental Accounting Platform emissions-calculators** (Agricultural Innovation Australia), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); those adapted parts remain under CC BY 4.0. This is an unofficial derivative, not reviewed or validated by AIA. Changes are listed in [`NOTICE`](NOTICE).
 
+The demo page's visual style and its embedded Kevin Sans font come from [Looseleaf](https://github.com/kevintngo/looseleaf) by Kevin T. Ngo, MIT License; see [`NOTICE`](NOTICE).
+
 Farm, lender and processor names in the demo are fictional.
 
 ## Sources
