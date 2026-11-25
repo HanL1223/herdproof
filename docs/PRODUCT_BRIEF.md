@@ -163,3 +163,6 @@ Sources: [AgriWebb docs](https://docs.agriwebb.com), [AgriWebb API report card](
 - ASRS modified liability: https://www.bdo.com.au/en-au/insights/esg-sustainability/asic-provides-guidance-on-the-modified-liability-settings-for-mandatory-sustainability-reporting
 - EUDR application 30 Dec 2026: https://www.addleshawgoddard.com/en/insights/insights-briefings/2026/retail-consumer/eu-deforestation-regulation-final-countdown-to-application-30-december-2026/
 - EC rates Australia low risk (May 2025): https://www.beefcentral.com/news/european-commission-declares-australia-low-risk-for-deforestation/
+- Commonwealth financed-emissions guidance (3 Nov 2026; RIC and CEFC named): https://www.finance.gov.au/sites/default/files/2026-11/financed-emissions-guidance.pdf
+- ASIC Scope 3 proportionality (Deloitte summary, Aug-Sep 2026): https://www.deloitte.com/au/en/services/audit-assurance/analysis/clarity-corporate-reporting-august-september-2026.html
+- NAB program baselines from free calculators: https://www.nab.com.au/news/business-banking/from-fleece-to-footprint--reducing-emissions-in-ultrafine-wool-production
