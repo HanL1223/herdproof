@@ -87,6 +87,10 @@ Lenders see derived figures, flags and hashes. They never see animal-level recor
 | ASRS Group 2 started 1 Jul 2026; Group 3 starts 1 Jul 2027 | Mid-tier lenders and processors are entering mandatory reporting now |
 | Scope 3 modified liability ends for FYs starting after 31 Dec 2027 | Proxy-quality financed emissions become a liability question |
 | NAB 1.15% discount for agribusiness emissions reduction (Jan 2025) | Lenders are starting to price emissions performance |
+| [AASB S2025-1](https://standards.aasb.gov.au/sites/default/files/2025-12/AASBS2025-1_ES_12-25.pdf) (Dec 2025) lets entities limit Scope 3 Category 15 to financed emissions | Lenders' Scope 3 effort concentrates on loans, where beef dominates |
+| [Commonwealth financed-emissions guidance](https://www.finance.gov.au/sites/default/files/2026-11/financed-emissions-guidance.pdf) (3 Nov 2026) names the Regional Investment Corporation and CEFC as required reporters, and asks for reported vs estimated data and coverage to be shown | A named public farm lender with a mandate, and a disclosure format HerdProof's coverage split matches |
+| AUASB is issuing assurance guidance for financed emissions ([2026 work plan](https://www.auasb.gov.au/media/ec5nq4l4/auasb-workplanoverview-15jun2026.pdf)) | Auditors will test borrower-level evidence, which is what the pack is built for |
+| [PCAF named agriculture and land use](https://carbonaccountingfinancials.com/en/newsitem/pcaf-announces-new-standard-development-priorities) a 2026-28 standard priority | Methods for farm loans are still moving; reconciled primary data is the safe side of that change |
 | Free calculators are everywhere ([AgriWebb GAF calculator](https://help.agriwebb.com/en/articles/11846390-greenhouse-accounting-framework), [AIA engine maintained to June 2028](https://github.com/aginnovationaustralia/emissions-calculators), [CSIRO FarmPrint, Feb 2026](https://www.csiro.au/en/news/All/News/2026/February/CSIRO-unveils-new-tool-to-help-farmers-measure-environmental-footprint)) | The footprint is a commodity. Evidence a lender can rely on is not |
 
 ## How it works
@@ -177,7 +181,7 @@ flowchart LR
         G1["Bank review or processor survey"] --> G2["Connect AgriWebb and PIC"] --> G3["Intensity vs region and 3 levers in 5 minutes"] --> G4["Share pack with lender, earn discount"]
     end
     subgraph Lender["Ag lender: pays"]
-        L1["Financed-emissions disclosure or auditor query"] --> L2["Invite borrowers"] --> L3["Portfolio PCAF 4.0 to 2.9 in demo"] --> L4["A$50-150 per borrower farm per year"]
+        L1["Financed-emissions disclosure or auditor query"] --> L2["Invite borrowers"] --> L3["Portfolio PCAF 4.0 to 3.1 in demo, 2.9 once assured"] --> L4["A$50-150 per borrower farm per year"]
     end
     subgraph Processor["Processor: later"]
         P1["Scope 3 baseline or EUDR due diligence"] --> P2["Suppliers opt in to cohort"] --> P3["De-identified cohort vs carcase proxy"] --> P4["Cohort licence per supplier PIC"]
@@ -226,7 +230,7 @@ Links: [AgriWebb docs](https://docs.agriwebb.com) · [AgriWebb API report card](
 
 ![Grazier footprint and reconciliation](docs/images/02-grazier-footprint.png)
 
-**3. Lender sees portfolio data quality move.** Outstanding-weighted PCAF score before and after (4.0 to 2.9 here, because the page includes the hero farm's simulated sharing grant; the live API shows 4.0 to about 3.06 with 10 of 25 sharing), financed emissions, the data-quality mix and borrowers needing attention. Farm figures appear only for consenting borrowers.
+**3. Lender sees portfolio data quality move.** Outstanding-weighted PCAF score before and after (4.0 to 3.1 here, and 2.9 once the assurance-ready packs are independently assured; the page includes the hero farm's simulated sharing grant, while the live API shows 4.0 to 3.24, or 3.06 once assured, with 10 of 25 sharing), the share of exposure that is reported rather than estimated, financed emissions, the data-quality mix and borrowers needing attention. Farm figures appear only for consenting borrowers.
 
 ![Lender portfolio](docs/images/03-lender-portfolio.png)
 
@@ -295,7 +299,7 @@ uv run herdproof build --skip-generate                          # re-ingest and 
 
 `build` writes fixtures, landing files and the DuckDB warehouse to `data/`, which is not committed: it is reproducible from the seed (`HERDPROOF_SEED`). Stop `serve` before `build`, which recreates the DuckDB file. `demo/index.html` is committed and byte-identical across rebuilds.
 
-The live API shows Ironbark's PCAF score moving 4.0 to about 3.06 (10 of 25 borrowers sharing). The demo page shows 2.9 (11 sharing) because it includes the hero farm's simulated sharing grant from the grazier walkthrough.
+The live API shows Ironbark's PCAF score moving 4.0 to 3.24 (3.06 once assurance-ready packs are assured; 10 of 25 borrowers sharing). The demo page shows 3.1 (2.9 once assured; 11 sharing) because it includes the hero farm's simulated sharing grant from the grazier walkthrough.
 
 **Optional AI narratives.** `uv sync --extra ai`, then set `ANTHROPIC_API_KEY` (PowerShell: `$env:ANTHROPIC_API_KEY="..."`). `HERDPROOF_LLM_MODEL` overrides the default model. Without a key, or if a call fails, narratives come from deterministic templates.
 
@@ -338,7 +342,7 @@ Every route except `/health` and `/verify` needs a demo principal header, for ex
 - **Simplifications.** Seasons are FY quarters; calves under 200 days are excluded and replaced by a cow lactation uplift; diet quality by zone and season is approximate; plantings use a flat sequestration rate; northern-herd parameters are illustrative.
 - **Intensity.** (Scope 1 + 2 + purchased-cattle Scope 3) / liveweight produced, where liveweight produced = sold - purchased + closing - opening.
 - **Reconciliation.** Seven weighted checks (seed `ref_reconciliation_checks`). Confidence is the weighted score over checks that could be assessed; thresholds are heuristic.
-- **PCAF (business loans).** Baseline is option 3b, 3a or 2b depending on what the lender holds. Connected farms score 2 (1b); they score 1 (1a) only when all three sources are assessed, confidence is at least 75 and the deforestation check is clear. **PCAF 1a needs third-party verification**: HerdProof supplies the evidence trail, an assurer signs. Financed emissions attribute Scope 1 + 2 only, using outstanding / total assets. **Proxy factors are illustrative**, roughly right on average and wrong per farm.
+- **PCAF (business loans).** Baseline is option 3b, 3a or 2b depending on what the lender holds. Connected farms score 2 (1b). When all three sources are assessed, confidence is at least 75 and the deforestation check is clear, the pack is flagged **assurance-ready**; it reaches score 1 (1a) only after third-party verification, which HerdProof never self-awards. The portfolio shows both the score today and the score once assured. Financed emissions attribute Scope 1 + 2 only, using outstanding / total assets. **Proxy factors are illustrative**, roughly right on average and wrong per farm.
 - **Deforestation.** Baseline woody area at 31 Dec 2020. "Review" if a later observation falls more than max(10 ha, 2% of baseline) below it; "insufficient data" with fewer than 3 post-cut-off observations. Review is not fail, because clearing can be lawful. Australia is rated EUDR low risk, so this is due-diligence support, not a mandate.
 - **Benchmarks.** Consenting farms only. Each farm is compared with the most local published level (region, then state, then national), under the suppression rules above.
 - **Levers.** First-order what-ifs on the farm's own numbers, indicative only.
@@ -366,13 +370,14 @@ The honest case against HerdProof, and the conditions it needs:
 
 - **The free wedge is taken.** AgriWebb has a built-in GAF calculator, AIA's engine is free and maintained to June 2028, CSIRO FarmPrint launched in Feb 2026, and Ruminati is inside AgriWebb with CBA and Rabobank pilots. AMPC found carcase-data proxies close to verified footprints on average (11.7 vs 11.4 kg CO2e/kg). HerdProof cannot win on the footprint.
 - **Demand has softened.** The red meat industry dropped its CN30 target in Jun 2025, and the ACCU beef herd management method closed to new projects on 30 Sep 2025.
+- **Regulators accept estimates.** [ASIC's 2026 guidance](https://www.deloitte.com/au/en/services/audit-assurance/analysis/clarity-corporate-reporting-august-september-2026.html) stresses proportionality and faithful representation over precision for Scope 3, and [NAB's discount program](https://www.nab.com.au/news/business-banking/from-fleece-to-footprint--reducing-emissions-in-ultrafine-wool-production) lets farmers set baselines with free online calculators. Lenders may never need borrower-level evidence to comply.
 - **Supply has one gatekeeper.** AgriWebb issues every credential and its partner reuse terms are not public. AgriWebb covered more than 15% of the national herd (about 30.4M head across 53,964 cattle businesses) in 2022, so most graziers would need another path anyway.
 
 What must be true:
 
 1. **AgriWebb approval** with terms that allow computing from the data and sharing derived results with a grazier-nominated lender (benchmarks need their own right). This is the largest dependency.
 2. **An ISC NLIS licence**, with queries scoped to the consenting PIC.
-3. **A lender pays.** At least one regional or mid-tier lender values PCAF uplift enough to pay per farm. Fallback buyer: a Group 2 processor.
+3. **A lender pays.** At least one regional or mid-tier lender, or the Regional Investment Corporation (a named Commonwealth reporter of financed emissions), values reported-not-estimated coverage enough to pay per farm. Fallback buyer: a Group 2 processor.
 4. **Assurers accept multi-source reconciliation** as evidence for limited assurance, or HerdProof partners with one.
 5. **Proxies stay "not good enough"** for borrower-level pricing. If proxies are accepted at PCAF 2, the thesis weakens.
 6. **Satellite rights**: a commercial licence that allows derived outputs in packs, or a DEA-based pipeline lenders accept.
@@ -381,7 +386,7 @@ What must be true:
 
 | Weeks | Goal | Done when |
 |---|---|---|
-| 1-4 | **Access and demand** | AgriWebb partner conversation opened and ISC Developer Portal registration submitted; 5 regional or mid-tier lenders and 10 ag accountants interviewed with this demo; DEA Sentinel-2 woody-cover prototype on 3 real properties |
+| 1-4 | **Access and demand** | AgriWebb partner conversation opened and ISC Developer Portal registration submitted; 5 regional or mid-tier lenders, the Regional Investment Corporation and 10 ag accountants interviewed with this demo; DEA Sentinel-2 woody-cover prototype on 3 real properties |
 | 5-8 | **Pilot design** | One lender LOI for a 30-borrower pilot; an assurance provider reviews the pack format and reconciliation thresholds; price points of A$75, A$100 and A$150 per farm per year tested |
 | 9-12 | **Pilot run and decision** | Measured against the success metrics below; go or no-go against the other concepts |
 

@@ -1,4 +1,4 @@
-# HerdProof — Product Brief (demo v0.1, 20 Nov 2026)
+# HerdProof — Product Brief (demo v0.1, 20 Nov 2026; research refreshed 25 Nov 2026)
 
 > Consented herd and land data that turns Australian cattle graziers' records into **reconciled, assurance-ready (not assured) Scope 3 evidence packs for lender review**, for ag lenders and beef buyers.
 
@@ -25,11 +25,11 @@ HerdProof is a **lender-side, multi-source evidence layer**. For each borrower i
 
 1. **Reconciles** herd records (AgriWebb), NLIS livestock movements (ISC) and satellite pasture and woody-cover data. It checks the herd book against independent sources: sales and purchases against NLIS, stocking rate against pasture capacity, and opening + births + purchases − sales − deaths = closing.
 2. **Calculates** a GAF-consistent footprint and intensity. The demo uses a simplified port; production would use the AIA engine.
-3. **Scores** PCAF data quality before and after connection: from sector proxy (5) up to farm-reported (2), or multi-source reconciled with a clear land-use check and assurance-ready (1†).
+3. **Scores** PCAF data quality before and after connection: from sector proxy (5) up to farm-reported (2, option 1b). Packs that are multi-source reconciled with a clear land-use check are flagged **assurance-ready** and reach 1 (1a) only after independent verification†. The portfolio shows the score today and the score once assured.
 4. **Checks deforestation** against a 31 Dec 2020 cut-off (the EUDR date) using a woody-cover time series.
 5. **Packages** the result as a **hash-verifiable evidence pack** that an auditor or credit committee can verify independently.
 
-† PCAF option 1a requires emissions verified by a third party. HerdProof provides the reconciled evidence trail that makes a limited-assurance engagement cheap. It does not certify the emissions itself.
+† PCAF option 1a requires emissions verified by a third party. HerdProof provides the reconciled evidence trail that makes a limited-assurance engagement cheap. It never self-awards score 1 (changed 25 Nov 2026: earlier demo versions counted assurance-ready packs as 1).
 
 ## 3. Personas
 
@@ -43,7 +43,7 @@ HerdProof is a **lender-side, multi-source evidence layer**. For each borrower i
 ## 4. Customer journeys (trigger → value moment → paid moment)
 
 - **Grazier.** *Trigger:* the bank's annual review or a processor supplier survey. *Value moment:* within 5 minutes of connecting AgriWebb and the NLIS PIC, sees their intensity against the regional benchmark and three quantified improvement levers. *Paid moment:* none, because it is free for graziers. The grazier's payoff is the lender discount, earned by sharing the reconciled pack.
-- **Lender.** *Trigger:* first Scope 3 / financed-emissions disclosure, an auditor query about data quality, or the design of a sustainability-linked loan product. *Value moment:* the portfolio view shows the weighted PCAF score moving down from sector-proxy levels as borrowers connect (demo page, which includes the hero farm's simulated grant: Ironbark 4.0 → 2.9 with 11 of 25 borrowers sharing; the live API without that grant shows 4.0 → 3.06 with 10; Riverbend 3.32 → 2.05), with reconciliation flags and deforestation status per borrower. *Paid moment:* A$50–150 per borrower farm per year for evidence packs, PCAF scoring and the portfolio view.
+- **Lender.** *Trigger:* first Scope 3 / financed-emissions disclosure, an auditor query about data quality, or the design of a sustainability-linked loan product. *Value moment:* the portfolio view shows the weighted PCAF score moving down from sector-proxy levels as borrowers connect (demo page, which includes the hero farm's simulated grant: Ironbark 4.0 → 3.1 today, 2.9 once assured, with 11 of 25 borrowers sharing; the live API without that grant shows 4.0 → 3.24, or 3.06 once assured, with 10; Riverbend 3.32 → 2.64, or 2.05 once assured), plus the share of exposure that is reported rather than estimated, with reconciliation flags and deforestation status per borrower. *Paid moment:* A$50–150 per borrower farm per year for evidence packs, PCAF scoring and the portfolio view.
 - **Processor.** *Trigger:* Scope 3 baseline, EUDR due diligence, or a retailer request. *Value moment:* a de-identified supplier cohort intensity compared with carcase proxies, plus a deforestation-risk share. *Paid moment:* a cohort licence, priced per supplier PIC covered. This is later-stage.
 - **Accountant (channel).** Offers the connection as part of year-end work and earns a referral fee or a white-label margin.
 
@@ -122,11 +122,12 @@ Pilot success (one lender, 90 days):
 
 1. **AgriWebb Marketplace approval**, with terms that allow a third party to compute from the data and share derived results with a grazier-nominated lender. Aggregated benchmarks need their own explicit right. *This is the biggest dependency.*
 2. **ISC NLIS API licence** granted through the 7-step process, with movement queries scoped to the consenting PIC.
-3. **A lender LOI.** At least one regional or mid-tier lender values PCAF uplift and evidence enough to pay per farm. The fallback buyer is a Group 2 processor.
+3. **A lender LOI.** At least one regional or mid-tier lender, or the Regional Investment Corporation (named as a required financed-emissions reporter in Commonwealth guidance of 3 Nov 2026), values reported-not-estimated coverage enough to pay per farm. The fallback buyer is a Group 2 processor.
 4. **Assurance acceptance.** Auditors must accept multi-source reconciliation as a basis for verification, or HerdProof partners with an assurance firm.
 5. **Not out-competed by "good enough".** The carcase-proxy accuracy found by AMPC and the free calculators must still leave a gap for verification and lender workflow. If proxies become accepted at score 2, the thesis weakens.
 6. **Satellite licensing.** Cibo Labs or an equivalent must allow per-property derived outputs in evidence packs, or the Digital Earth Australia (DEA) Sentinel-2 fallback must be good enough for lenders.
 7. **Data coverage.** AgriWebb covered more than 15% of the national herd in 2022 (about 30.4M head across 53,964 cattle businesses, per MLA). The other 85% of graziers would need another farm-software adapter or a manual path.
+8. **Estimates stay acceptable.** ASIC's 2026 guidance stresses proportionality and faithful representation over precision for Scope 3, and NAB's discount program accepts baselines from free calculators. If that holds, lenders may comply without borrower-level evidence and HerdProof becomes a nice-to-have.
 
 ## 11. Data sources and their validity (checked 20 Nov 2026)
 

@@ -130,7 +130,8 @@ def _borrower_view(row: dict, shared: bool) -> dict:
     if shared and row["is_connected"]:
         return {
             **base,
-            "status": "reconciled" if row["connected_score"] == 1 else "farm_reported",
+            "status": "reconciled" if row["assurance_ready"] else "farm_reported",
+            "assurance_ready": row["assurance_ready"],
             "shared": True,
             "current_score": row["connected_score"],
             "current_option": row["connected_option"],
@@ -162,6 +163,9 @@ def lender_portfolio(con: Con, lender_id: str) -> dict:
     def weighted(key: str) -> float:
         return round(sum(b[key] * b["outstanding_aud"] for b in borrowers) / total, 2)
 
+    for b in borrowers:  # score once assurance-ready packs are independently assured (PCAF 1a)
+        b["assured_score"] = 1 if b.get("assurance_ready") else b["current_score"]
+
     return {
         "lender_id": lender_id,
         "lender_name": loans[0]["lender_name"],
@@ -173,6 +177,9 @@ def lender_portfolio(con: Con, lender_id: str) -> dict:
             "current_financed_t": round(sum(b["current_financed_t"] for b in borrowers), 1),
             "baseline_pcaf_score": weighted("baseline_score"),
             "current_pcaf_score": weighted("current_score"),
+            "assured_pcaf_score": weighted("assured_score"),
+            # Reported vs estimated split of exposure, as climate disclosure guidance asks lenders to show.
+            "reported_exposure_pct": round(100 * sum(b["outstanding_aud"] for b in borrowers if b["shared"]) / total, 1),
             "reconciled": sum(b["status"] == "reconciled" for b in borrowers),
             "farm_reported": sum(b["status"] == "farm_reported" for b in borrowers),
             "proxy": sum(b["status"] == "proxy" for b in borrowers),

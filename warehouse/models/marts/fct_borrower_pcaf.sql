@@ -36,13 +36,12 @@ select
     round(b.baseline_farm_t, 1) as baseline_farm_t,
     round(b.baseline_farm_t * b.attribution_factor, 1) as baseline_financed_t,
     fp.farm_id is not null as is_connected,
-    -- Score 1 also needs a clear land-use check: unassessed or post-cut-off clearing leaves land-use emissions open.
-    case when fp.farm_id is null then null
-         when r.coverage = 1 and r.confidence >= {{ var('pcaf_reconciled_min_confidence') }} and d.status = 'clear' then 1
-         else 2 end as connected_score,
-    case when fp.farm_id is null then null
-         when r.coverage = 1 and r.confidence >= {{ var('pcaf_reconciled_min_confidence') }} and d.status = 'clear' then '1a'
-         else '1b' end as connected_option,
+    -- PCAF 1a needs third-party verification, so HerdProof never self-awards score 1: connected farms are 1b (score 2).
+    case when fp.farm_id is not null then 2 end as connected_score,
+    case when fp.farm_id is not null then '1b' end as connected_option,
+    -- Assurance-ready: all sources assessed, confidence met, land-use clear. Moves to 1a only after an assurer signs.
+    coalesce(r.coverage = 1 and r.confidence >= {{ var('pcaf_reconciled_min_confidence') }} and d.status = 'clear', false)
+        and fp.farm_id is not null as assurance_ready,
     round(fp.scope1_t + fp.scope2_t, 1) as connected_farm_t,
     round((fp.scope1_t + fp.scope2_t) * b.attribution_factor, 1) as connected_financed_t,
     round(fp.intensity_kg_per_kg_lw, 2) as intensity_kg_per_kg_lw,

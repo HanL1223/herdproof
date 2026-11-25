@@ -334,12 +334,12 @@ const aud = n => "A$" + (n / 1e6).toFixed(1) + "m";
 const pct = (n, d = 0) => (n > 0 ? "+" : "") + fmt(n, d) + "%";
 const SCORE_COL = { 1: "var(--s1)", 2: "var(--s2)", 3: "var(--s3)", 4: "var(--s4)", 5: "var(--s5)" };
 const SCORE_INK = { 1: "#fff", 2: "#2a2420", 3: "#2a2420", 4: "#2a2420", 5: "#2a2420" };
-const SCORE_NAME = { 1: "Reconciled multi-source (assurance-ready)", 2: "Farm-reported primary data", 3: "Production proxy (head count)", 4: "Revenue proxy", 5: "Asset proxy" };
+const SCORE_NAME = { 1: "Independently verified (after assurance)", 2: "Farm-reported primary data", 3: "Production proxy (head count)", 4: "Revenue proxy", 5: "Asset proxy" };
 const score = s => s == null ? "–" : `<span class="score" style="background:${SCORE_COL[s]};color:${SCORE_INK[s]}" data-tip="PCAF ${s}: ${SCORE_NAME[s]}" aria-label="PCAF ${s}: ${SCORE_NAME[s]}">${s}</span>`;
 const STATUS = {
   pass: ["ok", "Pass"], warn: ["warn", "Warn"], fail: ["fail", "Fail"], not_assessed: ["na", "Not assessed"],
   clear: ["ok", "Clear: deforestation-free"], review: ["warn", "Review: clearing detected"], insufficient_data: ["na", "Insufficient data"],
-  reconciled: ["ok", "Reconciled"], revoked: ["fail", "Revoked: consent withdrawn"], farm_reported: ["info", "Farm-reported"], proxy: ["na", "Proxy only"],
+  reconciled: ["ok", "Assurance-ready"], revoked: ["fail", "Revoked: consent withdrawn"], farm_reported: ["info", "Farm-reported"], proxy: ["na", "Proxy only"],
   connected: ["ok", "Connected"], applied: ["ok", "Applied"], active: ["ok", "Active"], shared: ["ok", "Shared"], invited: ["info", "Invite sent"],
 };
 const pill = (k, text) => { const [c, t] = STATUS[k] || ["na", k]; return `<span class="pill ${c}">${esc(text ?? t)}</span>`; };
@@ -668,9 +668,9 @@ function lenderView() {
       `${s.reconciled + s.farm_reported} of ${s.borrowers} borrowers share evidence, so the PCAF score moves from ${fmt(s.baseline_pcaf_score, 1)} to ${fmt(s.current_pcaf_score, 1)}.`,
       selectField("Lender", "lender", DATA.lenders.map(l => [l.lender_id, `${l.lender_name} (${l.segment})`]), state.lenderId))}
     ${keys([
-      ["Portfolio PCAF score", hi(`${fmt(s.baseline_pcaf_score, 1)} to ${fmt(s.current_pcaf_score, 1)}`), "", "Outstanding-weighted; lower is better"],
+      ["Portfolio PCAF score", hi(`${fmt(s.baseline_pcaf_score, 1)} to ${fmt(s.current_pcaf_score, 1)}`), "", `Outstanding-weighted; lower is better. ${fmt(s.assured_pcaf_score, 1)} once assurance-ready packs are assured`],
       ["Financed emissions", fmt(s.current_financed_t), "t CO2e", `Proxy-only estimate was ${fmt(s.baseline_financed_t)} t`],
-      ["Evidence coverage", `${s.reconciled + s.farm_reported}`, `of ${s.borrowers} borrowers`, `${s.reconciled} reconciled · ${s.farm_reported} farm-reported · ${s.proxy} proxy`]])}
+      ["Evidence coverage", `${s.reconciled + s.farm_reported}`, `of ${s.borrowers} borrowers`, `${s.reconciled} assurance-ready · ${s.farm_reported} farm-reported · ${s.proxy} proxy · ${fmt(s.reported_exposure_pct, 0)}% of exposure reported, rest estimated`]])}
     <section class="sheet graph taped" aria-labelledby="h-mix"><h2 id="h-mix">Data quality mix</h2><p class="sub">Share of ${aud(s.outstanding_aud)} outstanding by PCAF score. Farm figures appear only where the borrower consented to share with you.</p>
       ${pcafMix(p.borrowers, narrow() ? 340 : 1060)}
       <p class="mt">${mv.short}</p>
@@ -678,8 +678,8 @@ function lenderView() {
       ${det("pcaf", "Show what each PCAF score means", `<table><tbody>
         <tr><td style="white-space:nowrap">${score(5)} ${score(4)}</td><td>Sector factor per A$ of assets or revenue (illustrative factors in this demo). Cannot tell one borrower from another.</td></tr>
         <tr><td>${score(3)}</td><td>Declared head count × regional factor (illustrative).</td></tr>
-        <tr><td>${score(2)}</td><td>Borrower's own herd records, GAF method (single source).</td></tr>
-        <tr><td>${score(1)}</td><td>Herd records reconciled with NLIS and satellite, confidence 75 or more, and a clear land-use check (clearing under review or missing imagery caps the score at 2). Assurance-ready, not assured: an independent assurer must sign before it is reported as verified.</td></tr>
+        <tr><td>${score(2)}</td><td>Borrower's own herd records, GAF method. Packs reconciled with NLIS and satellite (confidence 75 or more, clear land-use check) are marked assurance-ready.</td></tr>
+        <tr><td>${score(1)}</td><td>An assurance-ready pack after an independent assurer has verified it. HerdProof never awards this score itself.</td></tr>
         </tbody></table><p class="small muted">PCAF Standard, business loans.</p>`)}</section>
     <section class="sheet mt" aria-labelledby="h-bor"><h2 id="h-bor">Borrowers</h2>
       <p class="sub">Needs attention: <b>${s.flags + s.deforestation_review}</b> (${s.flags} reconciliation fails · ${s.deforestation_review} clearing reviews). Select a shared borrower's name to open its evidence pack.</p>

@@ -83,10 +83,10 @@ def _lender(f: dict) -> str:
     loss = f" ({d['loss_ha']:.0f} ha woody loss since cut-off)" if d["status"] == "review" else ""
     verified_note = (
         (
-            " Score 1 here means multi-source reconciled and assurance-ready; an independent limited-assurance "
-            "sign-off is still required before it is reported as verified."
+            " The pack is multi-source reconciled and assurance-ready; it moves to PCAF 1a only after an "
+            "independent limited-assurance sign-off."
         )
-        if p["after"] == 1
+        if p.get("assurance_ready")
         else ""
     )
     return (

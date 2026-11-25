@@ -105,7 +105,8 @@ def _methodology() -> dict:
         "enteric": "DMI (Minson & McDonald) x 20.7 g CH4/kg DMI (Charmley et al. 2016)",
         "intensity": "(Scope 1 + Scope 2 + purchased-cattle Scope 3) / liveweight produced",
         "pcaf": "PCAF Global Standard Part A, business loans: 3b/3a sector proxies (illustrative factors), 2b production "
-        "proxy, 1b farm-reported, 1a multi-source reconciled with a clear land-use check (assurance-ready, not assured)",
+        "proxy, 1b farm-reported (multi-source reconciled with a clear land-use check is flagged assurance-ready); "
+        "1a only after independent third-party verification",
         "financed_emissions": "Attributed Scope 1 + 2 only; purchased-cattle Scope 3 is in the footprint but not attributed",
         "attribution": "Equations and constants adapted from AIA Environmental Accounting Platform emissions-calculators "
         "v3.0.2 (Agricultural Innovation Australia, CC BY 4.0); unofficial derivative, not validated by AIA. See NOTICE.",
@@ -190,6 +191,7 @@ def lender_pack(con: Con, lender_id: str, farm_id: str) -> dict:
         "before_financed_t": loan["baseline_financed_t"],
         "after": loan["connected_score"],
         "after_option": loan["connected_option"],
+        "assurance_ready": loan["assurance_ready"],
         "financed_t": loan["connected_financed_t"],
         "attribution_factor": loan["attribution_factor"],
         "outstanding_aud": loan["outstanding_aud"],
